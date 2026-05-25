@@ -88,6 +88,9 @@ placeholder="Straße + Hausnummer + Ort (z.B. Hauptstraße 12, München)">
 
 <input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
 <button onclick="saveDistrict()">Bezirk speichern</button>
+<button onclick="downloadDistrictFile()">
+Bezirkdatei downloaden
+</button>
 
 <select id="bezirkListe"></select>
 
@@ -306,6 +309,39 @@ draw();
 
 }
 
+function downloadDistrictFile(){
+
+const bezirkName =
+document
+.getElementById("bezirkName")
+.value
+.trim()
+|| "bezirk";
+
+const data =
+JSON.stringify(points,null,2);
+
+const blob =
+new Blob(
+[data],
+{type:"application/json"}
+);
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download =
+bezirkName + ".json";
+
+a.click();
+
+URL.revokeObjectURL(a.href);
+
+}
+  
 function toggleInsertMode(){
 
 insertMode=!insertMode;
