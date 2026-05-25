@@ -63,6 +63,8 @@ onchange="importDistrict()">
 
 <button onclick="toggleEdit()">Bearbeitung</button>
 <button onclick="exportRoute()">Export Datei</button>
+<button onclick="toggleAddMode()">Zustellstopp hinzufügen</button>
+<button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
 <button onclick="clearRoute()">Aktuelle Route löschen</button>
 <button onclick="jumpToMyLocation()">Mein Standort</button>
 <button onclick="toggleFollow()">Folgen</button>
@@ -88,6 +90,8 @@ let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
 let markers=[];
 let line;
 let editMode=false;
+let addMode=false;
+let deleteMode=false;
 let myLocation;
 let followMe=false;
 let nextIndex=0;
@@ -123,9 +127,22 @@ draw();
 });
 
 marker.on("click",function(){
+
+if(deleteMode){
+
+if(confirm("Diesen Zustellstopp löschen?")){
+points.splice(index,1);
+saveCurrent();
+draw();
+}
+
+return;
+}
+
 if(editMode){
 editPoint(index);
 }
+
 });
 
 markers.push(marker);
@@ -144,7 +161,11 @@ localStorage.setItem("zustellpunkte",JSON.stringify(points));
 
 map.on("click",function(e){
 
-if(editMode){
+if(!addMode){
+return;
+}
+
+if(editMode || deleteMode){
 return;
 }
 
@@ -209,6 +230,38 @@ points[index].hinweis=neuerHinweis;
 }
 
 saveCurrent();
+draw();
+
+}
+
+function toggleAddMode(){
+
+addMode=!addMode;
+
+if(addMode){
+editMode=false;
+deleteMode=false;
+alert("Hinzufügen ist AN. Tippe auf die Karte, um einen Zustellstopp zu setzen.");
+}else{
+alert("Hinzufügen ist AUS.");
+}
+
+draw();
+
+}
+
+function toggleDeleteMode(){
+
+deleteMode=!deleteMode;
+
+if(deleteMode){
+editMode=false;
+addMode=false;
+alert("Löschen ist AN. Tippe einen Zustellstopp an, um ihn zu löschen.");
+}else{
+alert("Löschen ist AUS.");
+}
+
 draw();
 
 }
