@@ -221,19 +221,24 @@ if(neueFirma===null){return;}
 const neuerHinweis=prompt("Hinweis bearbeiten:",p.hinweis||"");
 if(neuerHinweis===null){return;}
 
-const loeschen=confirm("Diesen Wegpunkt löschen?");
-
-if(loeschen){
-points.splice(index,1);
-}else{
-points[index].empfaenger=neueEmpfaenger
+points[index].empfaenger=
+neueEmpfaenger
 .split(";")
-.map(e=>e.trim())
-.filter(e=>e.length>0);
-points[index].adresse=neueAdresse;
-points[index].firma=neueFirma;
-points[index].hinweis=neuerHinweis;
-}
+.map(
+e=>e.trim()
+)
+.filter(
+e=>e.length>0
+);
+
+points[index].adresse=
+neueAdresse;
+
+points[index].firma=
+neueFirma;
+
+points[index].hinweis=
+neuerHinweis;
 
 saveCurrent();
 draw();
