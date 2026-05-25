@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zustellkarte</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+}
+
+#bar{
+padding:8px;
+}
+
+#map{
+height:82vh;
+}
+
+input,button,select{
+padding:8px;
+margin:3px;
+}
+
+button{
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="bar">
+
+<input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
+
+<button onclick="saveDistrict()">Bezirk speichern</button>
+
+<select id="bezirkListe"></select>
+
+<button onclick="loadDistrict()">Bezirk laden</button>
+<input
+type="file"
+id="importFile"
+accept=".json"
+onchange="importDistrict()">
+
+<button onclick="deleteDistrict()">Bezirk löschen</button>
+
+<br>
+
+<input id="empfaenger" placeholder="Empfänger, z.B. Müller; Schmidt GmbH; Bäckerei">
+<input id="adresse" placeholder="Adresse">
+<input id="firma" placeholder="Firma">
+<input id="hinweis" placeholder="Hinweis">
+
+<br>
+
+<button onclick="toggleEdit()">Bearbeitung</button>
+<button onclick="exportRoute()">Export Datei</button>
+<button onclick="clearRoute()">Aktuelle Route löschen</button>
+<button onclick="jumpToMyLocation()">Mein Standort</button>
+<button onclick="toggleFollow()">Folgen</button>
+<button onclick="distanceToNext()">Entfernung</button>
+<button onclick="nextStop()">Nächstes Haus</button>
+
+</div>
+
+<div id="map"></div>
+
+<script>
+const map=L.map("map").setView([50,10],14);
+
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:19,
+attribution:"&copy; OpenStreetMap"
+}
+).addTo(map);
+
+let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
+let markers=[];
+let line;
+let editMode=false;
+let myLocation;
+let followMe=false;
+let nextIndex=0;
+
+function draw(){
+
+markers.forEach(m=>map.removeLayer(m));
+markers=[];
+
+if(line){
+map.removeLayer(line);
+}
+
+points.forEach((p,index)=>{
+
+const marker=L.marker([p.lat,p.lng],{draggable:editMode}).addTo(map);
+
+marker.bindPopup(
+"<b>"+(index+1)+". "+(p.adresse||"Haus")+"</b>"+
+"<br><b>Empfänger:</b><br>"+
+((p.empfaenger||[p.name||""])
+.map(e=>"• "+e)
+.join("<br>"))+
+"<br>Firma: "+(p.firma||"")+
+"<br>Hinweis: "+(p.hinweis||"")
+);
+
+marker.on("dragend",function(e){
+points[index].lat=e.target.getLatLng().lat;
+points[index].lng=e.target.getLatLng().lng;
+saveCurrent();
+draw();
+});
+
+marker.on("click",function(){
+if(editMode){
+editPoint(index);
+}
+});
+
+markers.push(marker);
+
+});
+
+if(points.length>1){
+line=L.polyline(points.map(p=>[p.lat,p.lng])).addTo(map);
+}
+
+}
+
+function saveCurrent(){
+localStorage.setItem("zustellpunkte",JSON.stringify(points));
+}
+
+map.on("click",function(e){
+
+if(editMode){
+return;
+}
+
+const punkt={
+lat:e.latlng.lat,
+lng:e.latlng.lng,
+empfaenger:
+document
+.getElementById("empfaenger")
+.value
+.split(";")
+.map(e=>e.trim())
+.filter(e=>e.length>0),
+adresse:document.getElementById("adresse").value,
+firma:document.getElementById("firma").value,
+hinweis:document.getElementById("hinweis").value
+};
+
+points.push(punkt);
+saveCurrent();
+
+document.getElementById("empfaenger").value="";
+document.getElementById("adresse").value="";
+document.getElementById("firma").value="";
+document.getElementById("hinweis").value="";
+
+draw();
+
+});
+
+function editPoint(index){
+
+const p=points[index];
+
+const neueEmpfaenger=prompt(
+"Empfänger bearbeiten, getrennt mit ;",
+(p.empfaenger||[p.name||""]).join("; ")
+);
+if(neueEmpfaenger===null){return;}
+
+const neueAdresse=prompt("Adresse bearbeiten:",p.adresse||"");
+if(neueAdresse===null){return;}
+
+const neueFirma=prompt("Firma bearbeiten:",p.firma||"");
+if(neueFirma===null){return;}
+
+const neuerHinweis=prompt("Hinweis bearbeiten:",p.hinweis||"");
+if(neuerHinweis===null){return;}
+
+const loeschen=confirm("Diesen Wegpunkt löschen?");
+
+if(loeschen){
+points.splice(index,1);
+}else{
+points[index].empfaenger=neueEmpfaenger
+.split(";")
+.map(e=>e.trim())
+.filter(e=>e.length>0);
+points[index].adresse=neueAdresse;
+points[index].firma=neueFirma;
+points[index].hinweis=neuerHinweis;
+}
+
+saveCurrent();
+draw();
+
+}
+
+function toggleEdit(){
+editMode=!editMode;
+
+alert(
+editMode
+?"Bearbeitung ist AN. Punkte anklicken oder verschieben."
+:"Bearbeitung ist AUS."
+);
+
+draw();
+}
+
+function saveDistrict(){
+
+const name=document.getElementById("bezirkName").value.trim();
+
+if(!name){
+alert("Bitte Bezirk-Namen eingeben.");
+return;
+}
+
+localStorage.setItem(
+"bezirk_"+name,
+JSON.stringify(points)
+);
+
+localStorage.setItem("letzterBezirk",name);
+
+updateDistrictList();
+
+alert("Bezirk gespeichert: "+name);
+
+}
+
+function loadDistrict(){
+
+const select=document.getElementById("bezirkListe");
+const name=select.value;
+
+if(!name){
+alert("Kein Bezirk ausgewählt.");
+return;
+}
+
+const data=localStorage.getItem("bezirk_"+name);
+
+if(!data){
+alert("Bezirk nicht gefunden.");
+return;
+}
+
+points=JSON.parse(data);
+saveCurrent();
+
+document.getElementById("bezirkName").value=name;
+localStorage.setItem("letzterBezirk",name);
+
+nextIndex=0;
+
+draw();
+
+alert("Bezirk geladen: "+name);
+
+}
+
+function deleteDistrict(){
+
+const select=document.getElementById("bezirkListe");
+const name=select.value;
+
+if(!name){
+alert("Kein Bezirk ausgewählt.");
+return;
+}
+
+if(!confirm("Bezirk wirklich löschen: "+name+"?")){
+return;
+}
+
+localStorage.removeItem("bezirk_"+name);
+
+updateDistrictList();
+
+alert("Bezirk gelöscht: "+name);
+
+}
+
+function updateDistrictList(){
+
+const select=document.getElementById("bezirkListe");
+
+select.innerHTML="";
+
+Object.keys(localStorage)
+.filter(k=>k.startsWith("bezirk_"))
+.map(k=>k.replace("bezirk_",""))
+.sort()
+.forEach(name=>{
+
+const option=document.createElement("option");
+option.value=name;
+option.textContent=name;
+select.appendChild(option);
+
+});
+
+const letzter=localStorage.getItem("letzterBezirk");
+
+if(letzter){
+select.value=letzter;
+}
+
+}
+
+function exportRoute(){
+
+const data=JSON.stringify(points,null,2);
+const blob=new Blob([data],{type:"application/json"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=(document.getElementById("bezirkName").value||"bezirk")+".json";
+a.click();
+
+}
+
+function clearRoute(){
+
+if(!confirm("Aktuelle Route wirklich löschen?")){
+return;
+}
+
+points=[];
+saveCurrent();
+draw();
+
+}
+
+function showLocation(){
+
+if(!navigator.geolocation){
+alert("Standort wird von diesem Browser nicht unterstützt.");
+return;
+}
+
+navigator.geolocation.watchPosition(
+
+function(pos){
+
+const lat=pos.coords.latitude;
+const lng=pos.coords.longitude;
+
+if(myLocation){
+myLocation.setLatLng([lat,lng]);
+}else{
+myLocation=L.circleMarker([lat,lng],{radius:10}).addTo(map);
+}
+
+if(followMe){
+map.setView([lat,lng],18);
+}
+
+},
+
+function(){
+console.log("Standort nicht erlaubt oder nicht verfügbar.");
+},
+
+{
+enableHighAccuracy:true,
+maximumAge:1000
+}
+
+);
+
+}
+
+function jumpToMyLocation(){
+
+if(myLocation){
+map.setView(myLocation.getLatLng(),18);
+}else{
+alert("Standort noch nicht gefunden oder nicht erlaubt.");
+}
+
+}
+
+function toggleFollow(){
+
+followMe=!followMe;
+
+alert(
+followMe
+?"Folgen ist AN."
+:"Folgen ist AUS."
+);
+
+}
+
+function distanceToNext(){
+
+if(!myLocation||points.length===0){
+alert("Standort oder Wegpunkte fehlen.");
+return;
+}
+
+const p=points[nextIndex];
+
+const dist=map.distance(
+myLocation.getLatLng(),
+[p.lat,p.lng]
+);
+
+alert(
+"Entfernung zu "+
+(nextIndex+1)+
+". "+
+(p.name||"Wegpunkt")+
+": "+
+Math.round(dist)+
+" Meter"
+);
+
+}
+
+function nextStop(){
+
+if(points.length===0){
+alert("Keine Wegpunkte vorhanden.");
+return;
+}
+
+const p=points[nextIndex];
+
+map.setView([p.lat,p.lng],19);
+
+alert(
+"Nächstes Haus: "+
+(nextIndex+1)+
+". "+
+(p.name||"Wegpunkt")
+);
+
+nextIndex++;
+
+if(nextIndex>=points.length){
+nextIndex=0;
+}
+
+}
+
+function importDistrict(){
+
+const file =
+document
+.getElementById(
+"importFile"
+)
+.files[0];
+
+if(!file){
+
+return;
+
+}
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+try{
+
+points =
+JSON.parse(
+e.target.result
+);
+
+saveCurrent();
+
+draw();
+
+alert(
+"Bezirk geladen"
+);
+
+}catch{
+
+alert(
+"Datei ungültig"
+);
+
+}
+
+};
+
+reader.readAsText(
+file
+);
+
+}
+updateDistrictList();
+showLocation();
+draw();
+</script>
+
+</body>
+</html>
