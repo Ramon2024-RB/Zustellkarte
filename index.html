@@ -165,12 +165,6 @@ draw();
 
 marker.on("click",function(){
 
-if(insertMode){
-insertAfterIndex=index;
-alert("Jetzt auf die Karte tippen, wo der neue Zustellstopp eingefügt werden soll.");
-return;
-}
-
 if(deleteMode){
 
 if(confirm("Diesen Zustellstopp löschen?")){
@@ -179,6 +173,12 @@ saveCurrent();
 draw();
 }
 
+return;
+}
+
+if(insertMode){
+insertAfterIndex=index;
+alert("Jetzt auf die Karte tippen, wo der neue Zustellstopp eingefügt werden soll.");
 return;
 }
 
@@ -346,11 +346,18 @@ function toggleDeleteMode(){
 deleteMode=!deleteMode;
 
 if(deleteMode){
+
 editMode=false;
 addMode=false;
-alert("Löschen ist AN. Tippe einen Zustellstopp an, um ihn zu löschen.");
+insertMode=false;
+insertAfterIndex=null;
+
+alert("Löschen AN. Tippe einen Zustellstopp an.");
+
 }else{
-alert("Löschen ist AUS.");
+
+alert("Löschen AUS.");
+
 }
 
 draw();
