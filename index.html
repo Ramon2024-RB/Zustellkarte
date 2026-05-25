@@ -104,6 +104,7 @@ cursor:pointer;
 <button class="fab-option" onclick="toggleDeleteMode()">🗑️</button>
 <button class="fab-option" onclick="toggleEdit()">✏️</button>
 <button class="fab-option" onclick="toggleAddMode()">➕</button>
+<button class="fab-option" onclick="toggleInsertMode()">↔️</button>
 <button class="fab-option" onclick="clearRoute()">❌</button>
 <button class="fab-main" onclick="toggleFab()">☰</button>
 
@@ -126,6 +127,8 @@ let line;
 let editMode=false;
 let addMode=false;
 let deleteMode=false;
+let insertMode=false;
+let insertAfterIndex=null;
 let myLocation;
 let followMe=false;
 let nextIndex=0;
@@ -161,6 +164,12 @@ draw();
 });
 
 marker.on("click",function(){
+
+if(insertMode){
+insertAfterIndex=index;
+alert("Jetzt auf die Karte tippen, wo der neue Zustellstopp eingefügt werden soll.");
+return;
+}
 
 if(deleteMode){
 
@@ -218,7 +227,24 @@ firma:document.getElementById("firma").value,
 hinweis:document.getElementById("hinweis").value
 };
 
+if(insertMode && insertAfterIndex!==null){
+
+points.splice(insertAfterIndex+1,0,punkt);
+
+insertMode=false;
+insertAfterIndex=null;
+
+saveCurrent();
+draw();
+
+alert("Zustellstopp wurde eingefügt.");
+return;
+
+}else{
+
 points.push(punkt);
+
+}
 saveCurrent();
 
 document.getElementById("empfaenger").value="";
@@ -273,6 +299,32 @@ draw();
 
 }
 
+function toggleInsertMode(){
+
+insertMode=!insertMode;
+
+if(insertMode){
+
+addMode=true;
+editMode=false;
+deleteMode=false;
+insertAfterIndex=null;
+
+alert("Einfügen AN. Tippe zuerst den Stopp an, NACH dem du einfügen willst.");
+
+}else{
+
+addMode=false;
+insertAfterIndex=null;
+
+alert("Einfügen AUS.");
+
+}
+
+draw();
+
+}
+  
 function toggleAddMode(){
 
 addMode=!addMode;
