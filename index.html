@@ -74,6 +74,13 @@ cursor:pointer;
 <button onclick="toggleFollow()">Folgen</button>
 <button onclick="distanceToNext()">Entfernung</button>
 
+<br>
+
+<input
+id="searchInput"
+placeholder="Straße + Hausnummer + Ort (z.B. Hauptstraße 12, München)">
+<button onclick="searchAddress()">Suchen</button>
+
 <details>
 <summary>Bearbeitungsmodus</summary>
 
@@ -685,6 +692,55 @@ document
 .getElementById("fabMenu")
 .classList
 .toggle("open");
+}
+
+let searchMarker;
+
+function searchAddress(){
+
+const query =
+document
+.getElementById("searchInput")
+.value
+.trim();
+
+if(!query){
+alert("Bitte Adresse eingeben.");
+return;
+}
+
+fetch(
+"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q="+
+encodeURIComponent(query)
+)
+.then(response=>response.json())
+.then(data=>{
+
+if(data.length===0){
+alert("Adresse nicht gefunden.");
+return;
+}
+
+const lat=parseFloat(data[0].lat);
+const lon=parseFloat(data[0].lon);
+
+map.setView([lat,lon],19);
+
+if(searchMarker){
+searchMarker.setLatLng([lat,lon]);
+}else{
+searchMarker=L.marker([lat,lon]).addTo(map);
+}
+
+searchMarker
+.bindPopup("Suchergebnis:<br>"+data[0].display_name)
+.openPopup();
+
+})
+.catch(()=>{
+alert("Fehler bei der Suche.");
+});
+
 }
 
 showLocation();
