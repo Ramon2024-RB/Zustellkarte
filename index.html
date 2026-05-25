@@ -27,6 +27,38 @@ padding:8px;
 margin:3px;
 }
 
+.fab-menu{
+position:fixed;
+right:20px;
+bottom:25px;
+z-index:9999;
+display:flex;
+flex-direction:column;
+align-items:flex-end;
+gap:12px;
+}
+
+.fab-main,
+.fab-option{
+width:58px;
+height:58px;
+border-radius:50%;
+border:none;
+background:#e53935;
+color:white;
+font-size:28px;
+box-shadow:0 4px 10px rgba(0,0,0,0.35);
+}
+
+.fab-option{
+display:none;
+font-size:24px;
+}
+
+.fab-menu.open .fab-option{
+display:block;
+}
+
 button{
 cursor:pointer;
 }
@@ -43,6 +75,17 @@ cursor:pointer;
 <button onclick="toggleFollow()">Folgen</button>
 <button onclick="distanceToNext()">Entfernung</button>
 </div>
+<div id="fabMenu" class="fab-menu">
+
+  <button class="fab-option" onclick="toggleDeleteMode()">🗑️</button>
+  <button class="fab-option" onclick="toggleEdit()">✏️</button>
+  <button class="fab-option" onclick="toggleAddMode()">➕</button>
+  <button class="fab-option" onclick="clearRoute()">❌</button>
+
+  <button class="fab-main" onclick="toggleFab()">☰</button>
+
+</div>
+<div id="map"></div>
 
 <details>
 <summary>Bearbeitungsmodus</summary>
@@ -68,12 +111,6 @@ onchange="importDistrict()">
 <input id="hinweis" placeholder="Hinweis">
 
 <br>
-
-<button onclick="toggleAddMode()">Zustellstopp hinzufügen</button>
-<button onclick="toggleEdit()">Zustellstopp bearbeiten</button>
-<button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
-<button onclick="exportRoute()">Export Datei</button>
-<button onclick="clearRoute()">Aktuelle Route löschen</button>
 
 </details>
 
@@ -592,6 +629,14 @@ file
 
 }
 updateDistrictList();
+
+function toggleFab(){
+document
+.getElementById("fabMenu")
+.classList
+.toggle("open");
+}
+
 showLocation();
 draw();
 </script>
