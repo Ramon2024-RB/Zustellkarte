@@ -86,6 +86,50 @@ cursor:pointer;
 
 </div>
 
+<details>
+
+<summary>Bearbeitungsmodus</summary>
+
+<br>
+
+<input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
+
+<button onclick="saveDistrict()">
+Bezirk speichern
+</button>
+
+<select id="bezirkListe"></select>
+
+<button onclick="loadDistrict()">
+Bezirk laden
+</button>
+
+<input
+type="file"
+id="importFile"
+accept=".json"
+onchange="importDistrict()">
+
+<br>
+
+<input
+id="empfaenger"
+placeholder="Empfänger">
+
+<input
+id="adresse"
+placeholder="Adresse">
+
+<input
+id="firma"
+placeholder="Firma">
+
+<input
+id="hinweis"
+placeholder="Hinweis">
+
+</details>
+
 <div id="map"></div>
 
 <div id="fabMenu" class="fab-menu">
@@ -114,9 +158,6 @@ onclick="clearRoute()">
 onclick="toggleFab()">
 ☰
 </button>
-
-<details>
-<summary>Bearbeitungsmodus</summary>
 
 </div>
 
