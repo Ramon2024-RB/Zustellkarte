@@ -278,15 +278,28 @@ draw();
 }
 
 function toggleEdit(){
+
 editMode=!editMode;
 
+if(editMode){
+
+deleteMode=false;
+addMode=false;
+
 alert(
-editMode
-?"Bearbeitung ist AN. Punkte anklicken oder verschieben."
-:"Bearbeitung ist AUS."
+"Bearbeitung AN"
 );
 
+}else{
+
+alert(
+"Bearbeitung AUS"
+);
+
+}
+
 draw();
+
 }
 
 function saveDistrict(){
