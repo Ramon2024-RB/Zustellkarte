@@ -92,7 +92,7 @@ cursor:pointer;
 
 <br>
 
-<input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
+<input id="bezirkName" placeholder="Bezirk">
 
 <button onclick="saveDistrict()">
 Bezirk speichern
@@ -112,21 +112,10 @@ onchange="importDistrict()">
 
 <br>
 
-<input
-id="empfaenger"
-placeholder="Empfänger">
-
-<input
-id="adresse"
-placeholder="Adresse">
-
-<input
-id="firma"
-placeholder="Firma">
-
-<input
-id="hinweis"
-placeholder="Hinweis">
+<input id="empfaenger" placeholder="Empfänger">
+<input id="adresse" placeholder="Adresse">
+<input id="firma" placeholder="Firma">
+<input id="hinweis" placeholder="Hinweis">
 
 </details>
 
@@ -135,29 +124,19 @@ placeholder="Hinweis">
 <div id="fabMenu" class="fab-menu">
 
 <button class="fab-option"
-onclick="toggleDeleteMode()">
-🗑️
-</button>
+onclick="toggleDeleteMode()">🗑️</button>
 
 <button class="fab-option"
-onclick="toggleEdit()">
-✏️
-</button>
+onclick="toggleEdit()">✏️</button>
 
 <button class="fab-option"
-onclick="toggleAddMode()">
-➕
-</button>
+onclick="toggleAddMode()">➕</button>
 
 <button class="fab-option"
-onclick="clearRoute()">
-❌
-</button>
+onclick="clearRoute()">❌</button>
 
 <button class="fab-main"
-onclick="toggleFab()">
-☰
-</button>
+onclick="toggleFab()">☰</button>
 
 </div>
 
