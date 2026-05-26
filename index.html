@@ -75,6 +75,8 @@ cursor:pointer;
 <button onclick="toggleFollow()">Folgen</button>
 <button onclick="distanceToNext()">Entfernung</button>
 <button onclick="showStreetList()">Straßen</button>
+<button onclick="reportMissingHouse()">Haus fehlt</button>
+<button onclick="importAddressList()">Adressliste importieren</button>
 
 <br>
 
@@ -983,7 +985,135 @@ document
 .display="none";
 
 }
-  
+
+function reportMissingHouse(){
+
+const text = prompt(
+"Welches Haus fehlt? Bitte Straße, Hausnummer und Ort eingeben:"
+);
+
+if(!text){
+return;
+}
+
+const bezirk =
+document.getElementById("bezirkName").value || "Unbekannter Bezirk";
+
+const subject =
+encodeURIComponent("Haus fehlt in Zustellkarte");
+
+const body =
+encodeURIComponent(
+"Bezirk: "+bezirk+"\n\n"+
+"Fehlendes Haus:\n"+text+"\n\n"+
+"Gemeldet über Zustellkarte"
+);
+
+window.location.href =
+"mailto:albert.nico.2609@gmail.com?subject="+subject+"&body="+body;
+
+}
+
+async function importAddressList(){
+
+const text =
+prompt(
+"Adressen einfügen (eine Zeile = eine Adresse)"
+);
+
+if(!text){
+return;
+}
+
+const lines =
+text
+.split("\n")
+.map(
+l=>l.trim()
+)
+.filter(
+l=>l
+);
+
+for(
+let i=0;
+i<lines.length;
+i++
+){
+
+const addr=
+lines[i];
+
+try{
+
+const res=
+await fetch(
+
+"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q="+
+encodeURIComponent(
+addr
+)
+
+);
+
+const data=
+await res.json();
+
+if(
+data.length
+){
+
+points.push({
+
+lat:
+parseFloat(
+data[0].lat
+),
+
+lng:
+parseFloat(
+data[0].lon
+),
+
+adresse:
+addr,
+
+firma:"",
+hinweis:"",
+empfaenger:[]
+
+});
+
+draw();
+
+}
+
+await new Promise(
+r=>
+setTimeout(
+r,
+1200
+)
+);
+
+}catch(e){
+
+console.log(
+addr
+);
+
+}
+
+}
+
+saveCurrent();
+
+alert(
+"Import fertig"
+);
+
+}
+
 showLocation();
 draw();
 
