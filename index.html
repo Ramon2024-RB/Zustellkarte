@@ -1018,23 +1018,23 @@ window.location.href =
 
 async function importAddressList(){
 
-const text =
+const text=
 prompt(
-"Adressen einfügen (eine Zeile = eine Adresse)"
+"Adressen einfügen\n\nFormat:\nMusterstraße, 1,2,3,4, Schweinfurt"
 );
 
 if(!text){
 return;
 }
 
-const lines =
+const lines=
 text
 .split("\n")
 .map(
 l=>l.trim()
 )
 .filter(
-l=>l
+l=>l.length>0
 );
 
 for(
@@ -1043,27 +1043,32 @@ i<lines.length;
 i++
 ){
 
-const line =
+const line=
 lines[i];
 
-const parts =
+const parts=
 line
 .split(",")
 .map(
 p=>p.trim()
 );
 
-const street =
+if(
+parts.length<3
+){
+continue;
+}
+
+const street=
 parts[0];
 
-const city =
+const city=
 parts[
 parts.length-1
 ];
 
-const numbers =
-parts
-.slice(
+const numbers=
+parts.slice(
 1,
 parts.length-1
 );
@@ -1073,7 +1078,7 @@ const nr
 of numbers
 ){
 
-const addr =
+const addr=
 street+
 " "+
 nr+
@@ -1121,6 +1126,36 @@ empfaenger:[]
 });
 
 draw();
+
+}
+
+await new Promise(
+r=>
+setTimeout(
+r,
+1200
+)
+);
+
+}catch(e){
+
+console.log(
+addr
+);
+
+}
+
+}
+
+}
+
+saveCurrent();
+
+draw();
+
+alert(
+"Import fertig"
+);
 
 }
 
