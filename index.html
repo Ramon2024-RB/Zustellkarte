@@ -1018,8 +1018,7 @@ window.location.href =
 
 async function importAddressList(){
 
-const text=
-prompt(
+const text = prompt(
 "Adressen einfügen\n\nFormat:\nMusterstraße, 1,2,3,4, Schweinfurt"
 );
 
@@ -1027,121 +1026,59 @@ if(!text){
 return;
 }
 
-const lines=
-text
+const lines = text
 .split("\n")
-.map(
-l=>l.trim()
-)
-.filter(
-l=>l.length>0
-);
+.map(l => l.trim())
+.filter(l => l.length > 0);
 
-for(
-let i=0;
-i<lines.length;
-i++
-){
+for(let i=0; i<lines.length; i++){
 
-const line=
-lines[i];
-
-const parts=
-line
+const parts = lines[i]
 .split(",")
-.map(
-p=>p.trim()
-);
+.map(p => p.trim())
+.filter(p => p.length > 0);
 
-if(
-parts.length<3
-){
+if(parts.length < 3){
 continue;
 }
 
-const street=
-parts[0];
+const street = parts[0];
+const city = parts[parts.length - 1];
+const numbers = parts.slice(1, parts.length - 1);
 
-const city=
-parts[
-parts.length-1
-];
+for(const nr of numbers){
 
-const numbers=
-parts.slice(
-1,
-parts.length-1
-);
-
-for(
-const nr
-of numbers
-){
-
-const addr=
-street+
-" "+
-nr+
-", "+
-city;
+const addr = street + " " + nr + ", " + city;
 
 try{
 
-const res=
-await fetch(
-
-"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q="+
-encodeURIComponent(
-addr
-)
-
+const res = await fetch(
+"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=" +
+encodeURIComponent(addr)
 );
 
-const data=
-await res.json();
+const data = await res.json();
 
-if(
-data.length
-){
+if(data.length > 0){
 
 points.push({
-
-lat:
-parseFloat(
-data[0].lat
-),
-
-lng:
-parseFloat(
-data[0].lon
-),
-
-adresse:
-addr,
-
-firma:"",
-hinweis:"",
-empfaenger:[]
-
+lat: parseFloat(data[0].lat),
+lng: parseFloat(data[0].lon),
+adresse: addr,
+firma: "",
+hinweis: "",
+empfaenger: []
 });
 
 draw();
 
 }
 
-await new Promise(
-r=>
-setTimeout(
-r,
-1200
-)
-);
+await new Promise(resolve => setTimeout(resolve, 1200));
 
 }catch(e){
 
-console.log(
-addr
-);
+console.log("Nicht gefunden oder Fehler:", addr);
 
 }
 
@@ -1150,36 +1087,9 @@ addr
 }
 
 saveCurrent();
-
 draw();
 
-alert(
-"Import fertig"
-);
-
-}
-
-await new Promise(
-r=>
-setTimeout(
-r,
-1200
-)
-);
-
-}catch(e){
-
-console.log(addr);
-
-}
-
-}
-
-saveCurrent();
-
-alert(
-"Import fertig"
-);
+alert("Import fertig");
 
 }
 
