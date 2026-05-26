@@ -1041,8 +1041,42 @@ i<lines.length;
 i++
 ){
 
-const addr=
+const line =
 lines[i];
+
+const parts =
+line
+.split(",")
+.map(
+p=>p.trim()
+);
+
+const street =
+parts[0];
+
+const city =
+parts[
+parts.length-1
+];
+
+const numbers =
+parts
+.slice(
+1,
+parts.length-1
+);
+
+for(
+const nr
+of numbers
+){
+
+const addr =
+street+
+" "+
+nr+
+", "+
+city;
 
 try{
 
@@ -1095,6 +1129,8 @@ r,
 1200
 )
 );
+
+}
 
 }catch(e){
 
