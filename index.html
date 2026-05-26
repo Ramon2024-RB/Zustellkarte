@@ -74,6 +74,7 @@ cursor:pointer;
 <button onclick="jumpToMyLocation()">Mein Standort</button>
 <button onclick="toggleFollow()">Folgen</button>
 <button onclick="distanceToNext()">Entfernung</button>
+<button onclick="showStreetList()">Straßen</button>
 
 <br>
 
@@ -158,6 +159,39 @@ max-width:90%;
 </div>
 </div>
 </div>  
+
+<div id="streetBox" style="display:none;">
+<div style="
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,0.6);
+z-index:10000;
+overflow:auto;
+padding:20px;
+">
+
+<div style="
+background:white;
+padding:15px;
+border-radius:12px;
+max-width:500px;
+margin:auto;
+">
+
+<h3>Straßen im Bezirk</h3>
+
+<div id="streetList"></div>
+
+<br>
+
+<button onclick="hideStreetList()">Schließen</button>
+
+</div>
+</div>
+</div>
 
 <script>
 const map=L.map("map").setView([50,10],14);
@@ -842,6 +876,109 @@ function hideQRCode(){
 
 document
 .getElementById("qrBox")
+.style
+.display="none";
+
+}
+  
+function getStreetName(p){
+
+const text =
+(p.adresse || "")
+.trim();
+
+if(!text){
+return "Ohne Straße";
+}
+
+return text
+.replace(/[0-9].*$/,"")
+.trim();
+
+}
+
+function showStreetList(){
+
+const streets = {};
+
+points.forEach((p,index)=>{
+
+const street =
+getStreetName(p);
+
+if(!streets[street]){
+streets[street]=[];
+}
+
+streets[street].push({
+point:p,
+index:index
+});
+
+});
+
+const streetList =
+document.getElementById("streetList");
+
+streetList.innerHTML="";
+
+Object.keys(streets)
+.sort()
+.forEach(street=>{
+
+const items =
+streets[street];
+
+const btn =
+document.createElement("button");
+
+btn.style.display="block";
+btn.style.width="100%";
+btn.style.margin="6px 0";
+btn.style.padding="10px";
+btn.style.textAlign="left";
+
+btn.textContent =
+street+
+" ("+
+items.length+
+" Stopps)";
+
+btn.onclick=function(){
+
+const first =
+items[0].point;
+
+map.setView(
+[
+first.lat,
+first.lng
+],
+18
+);
+
+document
+.getElementById("streetBox")
+.style
+.display="none";
+
+};
+
+streetList.appendChild(btn);
+
+});
+
+document
+.getElementById("streetBox")
+.style
+.display="block";
+
+}
+
+function hideStreetList(){
+
+document
+.getElementById("streetBox")
 .style
 .display="none";
 
