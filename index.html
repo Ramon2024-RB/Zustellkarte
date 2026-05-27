@@ -1019,7 +1019,7 @@ window.location.href =
 async function importAddressList(){
 
 const text = prompt(
-"Adressen einfügen\n\nFormat:\nMusterstraße, 1,2,3,4, Schweinfurt"
+"Liste einfügen\n\nFormat:\nMusterstraße, 1,2,3,4, Schweinfurt\nMaxstraße, 6,8,10,12, Schweinfurt"
 );
 
 if(!text){
@@ -1031,9 +1031,9 @@ const lines = text
 .map(l => l.trim())
 .filter(l => l.length > 0);
 
-for(let i=0; i<lines.length; i++){
+for(const line of lines){
 
-const parts = lines[i]
+const parts = line
 .split(",")
 .map(p => p.trim())
 .filter(p => p.length > 0);
@@ -1046,41 +1046,49 @@ const street = parts[0];
 const city = parts[parts.length - 1];
 const numbers = parts.slice(1, parts.length - 1);
 
-for(const nr of numbers){
-
-const addr = street + " " + nr + ", " + city;
-
 try{
 
 const res = await fetch(
 "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=" +
-encodeURIComponent(addr)
+encodeURIComponent(street + ", " + city)
 );
 
 const data = await res.json();
 
-if(data.length > 0){
+if(data.length === 0){
+console.log("Straße nicht gefunden:", street, city);
+continue;
+}
+
+const baseLat = parseFloat(data[0].lat);
+const baseLng = parseFloat(data[0].lon);
+
+for(let i=0; i<numbers.length; i++){
+
+const angle = 0.00008;
+const offset = i - (numbers.length / 2);
+
+const lat = baseLat + offset * angle;
+const lng = baseLng + offset * angle;
 
 points.push({
-lat: parseFloat(data[0].lat),
-lng: parseFloat(data[0].lon),
-adresse: addr,
+lat: lat,
+lng: lng,
+adresse: street + " " + numbers[i] + ", " + city,
 firma: "",
 hinweis: "",
 empfaenger: []
 });
 
-draw();
-
 }
+
+draw();
 
 await new Promise(resolve => setTimeout(resolve, 1200));
 
 }catch(e){
 
-console.log("Nicht gefunden oder Fehler:", addr);
-
-}
+console.log("Fehler bei:", line);
 
 }
 
