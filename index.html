@@ -7,7 +7,12 @@
 <title>Zustellkarte</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <style>
 body{
@@ -199,6 +204,7 @@ margin:auto;
 
 <script>
 const map=L.map("map").setView([50,10],14);
+const markers =L.markerClusterGroup();
 
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -222,6 +228,8 @@ let nextIndex=0;
 
 function draw(){
 
+markers.clearLayers();
+
 markers.forEach(m=>map.removeLayer(m));
 markers=[];
 
@@ -231,7 +239,9 @@ map.removeLayer(line);
 
 points.forEach((p,index)=>{
 
-const marker=L.marker([p.lat,p.lng],{draggable:editMode}).addTo(map);
+const marker =L.marker([p.lat,p.lng],{draggable:editMode});
+
+markers.addLayer(marker);
 
 marker.bindPopup(
 "<b>"+(index+1)+". "+(p.adresse||"Haus")+"</b>"+
@@ -1103,6 +1113,8 @@ alert("Import fertig");
 
 showLocation();
 draw();
+
+map.addLayer(markers);
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
