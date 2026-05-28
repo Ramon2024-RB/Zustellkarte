@@ -215,7 +215,9 @@ attribution:"&copy; OpenStreetMap"
 ).addTo(map);
 
 let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
-let markers=[];
+let markerList=[];
+
+const markers =L.markerClusterGroup();
 let line;
 let editMode=false;
 let addMode=false;
@@ -230,8 +232,11 @@ function draw(){
 
 markers.clearLayers();
 
-markers.forEach(m=>map.removeLayer(m));
-markers=[];
+markerList.forEach(
+m=>markers.removeLayer(m)
+);
+
+markerList=[];
 
 if(line){
 map.removeLayer(line);
@@ -285,7 +290,7 @@ editPoint(index);
 
 });
 
-markers.push(marker);
+markerList.push(marker);
 
 });
 
@@ -1108,6 +1113,8 @@ saveCurrent();
 draw();
 
 alert("Import fertig");
+
+map.addLayer(markers);
 
 }
 
