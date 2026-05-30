@@ -178,6 +178,8 @@ height:56px;
 <button onclick="reportMissingHouse()">Haus fehlt</button>
 <button onclick="importAddressList()">Adressliste importieren</button>
 
+<span id="progressText">0 / 0 erledigt</span>
+
 <select id="bezirkListe"></select>
 
 <br>
@@ -334,6 +336,9 @@ points.forEach((p,index)=>{
 const marker =L.marker([p.lat,p.lng],{draggable:editMode});
 
 marker.addTo(map);
+if(p.done){
+marker.setOpacity(0.35);
+}
 
 marker.bindPopup(
 "<b>"+(index+1)+". "+(p.adresse||"Haus")+"</b>"+
@@ -342,7 +347,10 @@ marker.bindPopup(
 .map(e=>"• "+e)
 .join("<br>"))+
 "<br>Firma: "+(p.firma||"")+
-"<br>Hinweis: "+(p.hinweis||"")
+"<br>Hinweis: "+(p.hinweis||"")+
+"<br><br>"+
+"<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
+"<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
 
 marker.on("dragend",function(e){
@@ -384,6 +392,8 @@ markers.push(marker);
 if(points.length>1){
 line=L.polyline(points.map(p=>[p.lat,p.lng])).addTo(map);
 }
+
+updateProgress();
 
 }
 
@@ -1202,6 +1212,49 @@ draw();
 alert("Import fertig");
 
 map.addLayer(markers);
+
+}
+
+function markDone(index){
+
+points[index].done=true;
+
+saveCurrent();
+draw();
+
+}
+
+function markOpen(index){
+
+points[index].done=false;
+
+saveCurrent();
+draw();
+
+}
+
+function updateProgress(){
+
+const total=points.length;
+
+const done=points.filter(
+p=>p.done
+).length;
+
+const el=
+document.getElementById(
+"progressText"
+);
+
+if(el){
+
+el.textContent=
+done+
+" / "+
+total+
+" erledigt";
+
+}
 
 }
 
