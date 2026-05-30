@@ -265,6 +265,7 @@ width:100%;
 <button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
 <button onclick="toggleInsertMode()">Zwischenstopp einfügen</button>
 <button onclick="toggleMailboxMode()">📮 Post-Briefkasten hinzufügen</button>
+<button onclick="toggleMailboxInsertMode()">📮 Briefkasten zwischen Stopps</button>
 <button onclick="clearRoute()">Aktuelle Route löschen</button>
 
 <button onclick="importAddressList()">Adressliste importieren</button>
@@ -408,8 +409,10 @@ let editMode=false;
 let addMode=false;
 let deleteMode=false;
 let insertMode=false;
-let mailboxMode=false;
 let insertAfterIndex=null;
+let mailboxMode=false;
+let mailboxInsertMode=false;
+let mailboxInsertAfterIndex=null;
 let myLocation;
 let followMe=false;
 let nextIndex=0;
@@ -520,6 +523,15 @@ draw();
 
 marker.on("click",function(){
 
+if(mailboxInsertMode){
+
+mailboxInsertAfterIndex=index;
+
+alert("Jetzt auf die Karte tippen, wo der Post-Briefkasten steht.");
+
+return;
+}
+
 if(deleteMode){
 
 if(confirm("Diesen Zustellstopp löschen?")){
@@ -560,6 +572,43 @@ localStorage.setItem("zustellpunkte",JSON.stringify(points));
 }
 
 map.on("click",function(e){
+
+if(mailboxInsertMode && mailboxInsertAfterIndex!==null){
+
+const adresse=prompt(
+"Adresse/Standort des Post-Briefkastens eingeben:"
+);
+
+if(!adresse){
+return;
+}
+
+const punkt={
+lat:e.latlng.lat,
+lng:e.latlng.lng,
+adresse:adresse,
+firma:"",
+hinweis:"Post-Briefkasten leeren",
+empfaenger:[],
+briefkasten:true
+};
+
+points.splice(
+mailboxInsertAfterIndex+1,
+0,
+punkt
+);
+
+saveCurrent();
+draw();
+
+mailboxInsertMode=false;
+mailboxInsertAfterIndex=null;
+
+alert("Post-Briefkasten wurde eingefügt.");
+
+return;
+}
 
 if(mailboxMode){
 
@@ -738,6 +787,32 @@ addMode=false;
 insertAfterIndex=null;
 
 alert("Einfügen AUS.");
+
+}
+
+draw();
+
+}
+
+function toggleMailboxInsertMode(){
+
+mailboxInsertMode=!mailboxInsertMode;
+
+mailboxInsertAfterIndex=null;
+
+if(mailboxInsertMode){
+
+addMode=false;
+editMode=false;
+deleteMode=false;
+insertMode=false;
+mailboxMode=false;
+
+alert("Briefkasten-Zwischenmodus AN. Tippe zuerst den Stopp an, nach dem der Briefkasten eingefügt werden soll.");
+
+}else{
+
+alert("Briefkasten-Zwischenmodus AUS.");
 
 }
 
