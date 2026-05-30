@@ -406,11 +406,6 @@ attribution:"&copy; OpenStreetMap"
 
 let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
 let markers=[];
-const clusterLayer = L.markerClusterGroup({
-maxClusterRadius:45,
-disableClusteringAtZoom:18
-});
-
 let line;
 let editMode=false;
 let addMode=false;
@@ -455,12 +450,6 @@ p.lng,
 }
 
 function draw(){
-  
-clusterLayer.clearLayers();
-
-if(map.hasLayer(clusterLayer)){
-map.removeLayer(clusterLayer);
-}
 
 markers.forEach(m=>map.removeLayer(m));
 markers=[];
@@ -523,7 +512,7 @@ draggable:editMode
 
 }
 
-clusterLayer.addLayer(marker);
+marker.addTo(map);
 
 if(p.briefkasten){
 
@@ -609,8 +598,6 @@ markers.push(marker);
 if(points.length>1){
 line=L.polyline(points.map(p=>[p.lat,p.lng])).addTo(map);
 }
-
-map.addLayer(clusterLayer);
 
 updateProgress();
 
