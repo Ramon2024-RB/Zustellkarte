@@ -206,15 +206,6 @@ height:calc(100vh - 56px);
 </div>
 
 <div class="section">
-<div class="sectionTitle">Navigation</div>
-
-<button onclick="nextStop()">Nächster Zustellpunkt</button>
-<button onclick="jumpToMyLocation()">Mein Standort</button>
-<button onclick="toggleFollow()">Folgen</button>
-<button onclick="distanceToNext()">Entfernung</button>
-</div>
-
-<div class="section">
 <div class="sectionTitle">Bezirk</div>
 
 <input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
@@ -246,6 +237,12 @@ height:calc(100vh - 56px);
 <input id="firma" placeholder="Firma">
 <input id="hinweis" placeholder="Hinweis">
 
+<button onclick="toggleAddMode()">Zustellstopp hinzufügen</button>
+<button onclick="toggleEdit()">Zustellstopp bearbeiten</button>
+<button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
+<button onclick="toggleInsertMode()">Zwischenstopp einfügen</button>
+<button onclick="clearRoute()">Aktuelle Route löschen</button>
+
 <button onclick="importAddressList()">Adressliste importieren</button>
 </div>
 
@@ -263,11 +260,13 @@ height:calc(100vh - 56px);
 
 <div id="fabMenu" class="fab-menu">
 
-<button class="fab-option" onclick="toggleDeleteMode()">🗑️</button>
-<button class="fab-option" onclick="toggleEdit()">✏️</button>
-<button class="fab-option" onclick="toggleAddMode()">➕</button>
-<button class="fab-option" onclick="toggleInsertMode()">↔️</button>
-<button class="fab-option" onclick="clearRoute()">❌</button>
+<button class="fab-option" onclick="nextStop()">➡️</button>
+<button class="fab-option" onclick="jumpToMyLocation()">📍</button>
+<button class="fab-option" onclick="toggleFollow()">🧭</button>
+<button class="fab-option" onclick="showStreetList()">🛣️</button>
+<button class="fab-option" onclick="distanceToNext()">📏</button>
+
+
 <button class="fab-main" onclick="toggleFab()">☰</button>
 
 </div>
