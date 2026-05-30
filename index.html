@@ -39,6 +39,24 @@ z-index:9000;
 position:relative;
 }
 
+#progressRing{
+width:54px;
+height:54px;
+border-radius:50%;
+background:conic-gradient(#ff9800 0%, #e9edf2 0%);
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+font-weight:800;
+font-size:13px;
+}
+
+#progressSmall{
+font-size:10px;
+font-weight:600;
+}
+
 .appTitle{
 font-weight:800;
 font-size:18px;
@@ -75,13 +93,14 @@ left:-92vw;
 width:92vw;
 max-width:420px;
 height:100dvh;
-padding-bottom:120px;
 background:white;
 z-index:10000;
 box-shadow:4px 0 18px rgba(0,0,0,0.25);
 transition:left .25s ease;
 padding:16px;
-overflow:auto;
+padding-bottom:120px;
+overflow-y:auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .sidebar.open{
@@ -180,6 +199,7 @@ left:0;
 
 #map{
 height:calc(100vh - 56px);
+width:100%;
 }
 }
 </style>
@@ -193,7 +213,10 @@ height:calc(100vh - 56px);
 
 <div class="appTitle">Zustellkarte</div>
 
-<div id="progressText">0 / 0 erledigt</div>
+<div id="progressRing">
+<div id="progressPercent">0%</div>
+<div id="progressSmall">0/0</div>
+</div>
 
 </div>
 
@@ -370,6 +393,7 @@ let insertAfterIndex=null;
 let myLocation;
 let followMe=false;
 let nextIndex=0;
+let activeStopIndex=null;
 let highlightedStreet=null;
 
 function draw(){
@@ -410,6 +434,10 @@ draggable:true
 }
 
 marker.addTo(map);
+if(index===activeStopIndex){
+marker.setOpacity(1);
+marker.openPopup();
+}
 if(highlightedStreet){
 
 const streetName=getStreetName(p);
@@ -832,12 +860,37 @@ draw();
 }
 
 function updateProgress(){
+
 const total=points.length;
 const done=points.filter(p=>p.done).length;
-const el=document.getElementById("progressText");
-if(el){
-el.textContent=done+" / "+total+" erledigt";
+const percent=total
+? Math.round((done/total)*100)
+: 0;
+
+const ring=
+document.getElementById("progressRing");
+
+const percentText=
+document.getElementById("progressPercent");
+
+const small=
+document.getElementById("progressSmall");
+
+if(ring){
+ring.style.background=
+"conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
 }
+
+if(percentText){
+percentText.textContent=
+percent+"%";
+}
+
+if(small){
+small.textContent=
+done+"/"+total;
+}
+
 }
 
 async function importAddressList(){
@@ -939,6 +992,7 @@ return;
 }
 
 const p=points[nextIndex];
+activeStopIndex=nextIndex;
 
 map.setView([p.lat,p.lng],19);
 
@@ -948,6 +1002,7 @@ alert(
 ". "+
 (p.name||"Wegpunkt")
 );
+draw();
 
 nextIndex++;
 
