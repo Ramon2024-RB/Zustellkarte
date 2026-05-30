@@ -204,7 +204,6 @@ margin:auto;
 
 <script>
 const map=L.map("map").setView([50,10],14);
-const markers =L.markerClusterGroup();
 
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -216,7 +215,6 @@ attribution:"&copy; OpenStreetMap"
 
 let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
 let markerList=[];
-
 const markers =L.markerClusterGroup();
 let line;
 let editMode=false;
