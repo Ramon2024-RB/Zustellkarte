@@ -478,12 +478,19 @@ marker.setOpacity(0.35);
 }
 
 marker.bindPopup(
-"<b>"+(index+1)+". "+(p.adresse||"Haus")+"</b>"+
+"<b>"+
+(index+1)+". "+
+(p.adresse || "Haus")+
+(p.firma ? " 🏢" : "")+
+"</b>"
 "<br><b>Empfänger:</b><br>"+
 ((p.empfaenger||[p.name||""])
 .map(e=>"• "+e)
 .join("<br>"))+
-"<br>Firma: "+(p.firma||"")+
+(p.firma
+? "<br><b>🏢 Firma:</b> "+p.firma
+: ""
+)+
 "<br>Hinweis: "+(p.hinweis||"")+
 "<br><br>"+
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
