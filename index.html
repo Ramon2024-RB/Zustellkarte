@@ -431,79 +431,9 @@ let marker;
 
 if(p.briefkasten){
 
-marker=L.marker(
-[p.lat,p.lng],
-{
-draggable:editMode,
-icon:yellowIcon
-}
-);
-
-}
-else if(
-highlightedStreet &&
-getStreetName(p)===highlightedStreet
-){
-
-marker=L.marker(
-[p.lat,p.lng],
-{
-draggable:editMode,
-icon:greenIcon
-}
-);
-
-}
-else if(
-p.firma &&
-p.firma.trim()!==""
-){
-
-marker=L.marker(
-[p.lat,p.lng],
-{
-draggable:editMode,
-icon:redIcon
-}
-);
-
-}
-else{
-
-marker=L.marker(
-[p.lat,p.lng],
-{
-draggable:editMode
-}
-);
-
-}
-
-marker.addTo(map);
-if(index===activeStopIndex){
-marker.setOpacity(1);
-marker.openPopup();
-}
-if(highlightedStreet){
-
-const streetName=getStreetName(p);
-
-if(streetName===highlightedStreet){
-marker.setOpacity(1);
-}else{
-marker.setOpacity(0.25);
-}
-
-}
-if(p.done){
-marker.setOpacity(0.35);
-}
-
-if(p.briefkasten){
-
 marker.bindPopup(
 "<b>📮 Post-Briefkasten leeren</b><br>"+
-(p.adresse||"")
+(p.adresse || "")
 );
 
 }else{
@@ -513,16 +443,15 @@ marker.bindPopup(
 (index+1)+". "+
 (p.adresse || "Haus")+
 (p.firma ? " 🏢" : "")+
-"</b>"
+"</b>"+
 "<br><b>Empfänger:</b><br>"+
-((p.empfaenger||[p.name||""])
+((p.empfaenger || [p.name || ""])
 .map(e=>"• "+e)
 .join("<br>"))+
 (p.firma
 ? "<br><b>🏢 Firma:</b> "+p.firma
-: ""
-)+
-"<br>Hinweis: "+(p.hinweis||"")+
+: "")+
+"<br>Hinweis: "+(p.hinweis || "")+
 "<br><br>"+
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
