@@ -419,21 +419,31 @@ let nextIndex=0;
 let activeStopIndex=null;
 let highlightedStreet=null;
 
-function navigateToPoint(index){
+function navigateApple(index){
 
 const p=points[index];
 
-if(!p){
-return;
+window.open(
+"https://maps.apple.com/?daddr="+
+p.lat+
+","+
+p.lng,
+"_blank"
+);
+
 }
 
-const url=
+function navigateGoogle(index){
+
+const p=points[index];
+
+window.open(
 "https://www.google.com/maps/dir/?api=1&destination="+
 p.lat+
 ","+
-p.lng;
-
-window.open(url,"_blank");
+p.lng,
+"_blank"
+);
 
 }
 
@@ -508,7 +518,8 @@ marker.bindPopup(
 "<b>📮 Post-Briefkasten leeren</b><br>"+
 (p.adresse || "")+
 "<br><br>"+
-"<button onclick='navigateToPoint("+index+")'>🧭 Navigation</button>"
+"<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
+"<button onclick='navigateGoogle("+index+")'>📍 Google</button>"
 );
 
 }else{
@@ -528,7 +539,9 @@ marker.bindPopup(
 : "")+
 "<br>Hinweis: "+(p.hinweis || "")+
 "<br><br>"+
-"<button onclick='navigateToPoint("+index+")'>🧭 Navigation</button><br><br>"+
+"<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
+"<button onclick='navigateGoogle("+index+")'>📍 Google</button>"+
+"<br><br>"+
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
