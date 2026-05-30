@@ -746,6 +746,36 @@ draw();
 
 }
 
+function updateProgress(){
+const total=points.length;
+const done=points.filter(p=>p.done).length;
+const el=document.getElementById("progressText");
+if(el){
+el.textContent=done+" / "+total+" erledigt";
+}
+}
+
+function reportMissingHouse(){
+const text=prompt("Welches Haus fehlt? Straße, Hausnummer und Ort eingeben:");
+if(!text){return;}
+
+const bezirk=document.getElementById("bezirkName").value||"Unbekannter Bezirk";
+
+const subject=encodeURIComponent("Haus fehlt in Zustellkarte");
+const body=encodeURIComponent(
+"Bezirk: "+bezirk+"\n\n"+
+"Fehlendes Haus:\n"+text+"\n\n"+
+"Gemeldet über Zustellkarte"
+);
+
+window.location.href=
+"mailto:albert.nico.2609@gmail.com?subject="+subject+"&body="+body;
+}
+
+async function importAddressList(){
+alert("Adresslisten-Import ist noch nicht sauber aktiv. Wir bauen den als Nächstes neu ein.");
+}
+
 function showLocation(){
 
 if(!navigator.geolocation){
