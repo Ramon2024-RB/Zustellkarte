@@ -419,6 +419,24 @@ let nextIndex=0;
 let activeStopIndex=null;
 let highlightedStreet=null;
 
+function navigateToPoint(index){
+
+const p=points[index];
+
+if(!p){
+return;
+}
+
+const url=
+"https://www.google.com/maps/dir/?api=1&destination="+
+p.lat+
+","+
+p.lng;
+
+window.open(url,"_blank");
+
+}
+
 function draw(){
 
 markers.forEach(m=>map.removeLayer(m));
@@ -488,7 +506,9 @@ if(p.briefkasten){
 
 marker.bindPopup(
 "<b>📮 Post-Briefkasten leeren</b><br>"+
-(p.adresse || "")
+(p.adresse || "")+
+"<br><br>"+
+"<button onclick='navigateToPoint("+index+")'>🧭 Navigation</button>"
 );
 
 }else{
@@ -508,6 +528,7 @@ marker.bindPopup(
 : "")+
 "<br>Hinweis: "+(p.hinweis || "")+
 "<br><br>"+
+"<button onclick='navigateToPoint("+index+")'>🧭 Navigation</button><br><br>"+
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
