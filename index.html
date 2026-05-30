@@ -431,6 +431,58 @@ let marker;
 
 if(p.briefkasten){
 
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:yellowIcon
+}
+);
+
+}
+else if(
+highlightedStreet &&
+getStreetName(p)===highlightedStreet
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:greenIcon
+}
+);
+
+}
+else if(
+p.firma &&
+p.firma.trim()!==""
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:redIcon
+}
+);
+
+}
+else{
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode
+}
+);
+
+}
+
+marker.addTo(map);
+
+if(p.briefkasten){
+
 marker.bindPopup(
 "<b>📮 Post-Briefkasten leeren</b><br>"+
 (p.adresse || "")
