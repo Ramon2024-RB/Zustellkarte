@@ -377,6 +377,17 @@ points.forEach((p,index)=>{
 const marker =L.marker([p.lat,p.lng],{draggable:editMode});
 
 marker.addTo(map);
+if(highlightedStreet){
+
+const streetName=getStreetName(p);
+
+if(streetName===highlightedStreet){
+marker.setOpacity(1);
+}else{
+marker.setOpacity(0.25);
+}
+
+}
 if(p.done){
 marker.setOpacity(0.35);
 }
