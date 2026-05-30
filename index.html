@@ -1014,16 +1014,44 @@ nextIndex=0;
 
 function importDistrict(){
 
-const file =
-document
-.getElementById(
-"importFile"
-)
-.files[0];
+const file=document.getElementById("importFile").files[0];
 
 if(!file){
-
+alert("Keine Datei ausgewählt");
 return;
+}
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+try{
+
+const data=JSON.parse(e.target.result);
+
+if(Array.isArray(data)){
+points=data;
+}else if(data.points && Array.isArray(data.points)){
+points=data.points;
+}else{
+alert("Datei ungültig");
+return;
+}
+
+saveCurrent();
+draw();
+
+alert("Bezirk geladen: "+points.length+" Stopps");
+
+}catch(err){
+
+alert("Datei ungültig");
+
+}
+
+};
+
+reader.readAsText(file);
 
 }
 
