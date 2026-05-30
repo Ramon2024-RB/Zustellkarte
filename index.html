@@ -178,7 +178,9 @@ height:56px;
 <button onclick="reportMissingHouse()">Haus fehlt</button>
 <button onclick="importAddressList()">Adressliste importieren</button>
 
-<span id="progressText">0 / 0 erledigt</span>
+<span id="progressText">
+0 / 0 erledigt
+</span>
 
 <select id="bezirkListe"></select>
 
@@ -1246,35 +1248,8 @@ draw();
 
 }
 
-function updateProgress(){
-
-const total=points.length;
-
-const done=points.filter(
-p=>p.done
-).length;
-
-const el=
-document.getElementById(
-"progressText"
-);
-
-if(el){
-
-el.textContent=
-done+
-" / "+
-total+
-" erledigt";
-
-}
-
-}
-
 showLocation();
 draw();
-
-map.addLayer(markers);
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
