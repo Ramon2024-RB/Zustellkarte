@@ -417,7 +417,7 @@ getStreetName(p)===highlightedStreet
 marker=L.marker(
 [p.lat,p.lng],
 {
-draggable:true,
+draggable:editmode,
 icon:greenIcon
 }
 );
@@ -427,7 +427,7 @@ icon:greenIcon
 marker=L.marker(
 [p.lat,p.lng],
 {
-draggable:true
+draggable:editmode
 }
 );
 
