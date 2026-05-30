@@ -264,6 +264,7 @@ width:100%;
 <button onclick="toggleEdit()">Zustellstopp bearbeiten</button>
 <button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
 <button onclick="toggleInsertMode()">Zwischenstopp einfügen</button>
+<button onclick="toggleMailboxMode()">📮 Post-Briefkasten hinzufügen</button>
 <button onclick="clearRoute()">Aktuelle Route löschen</button>
 
 <button onclick="importAddressList()">Adressliste importieren</button>
@@ -383,6 +384,15 @@ popupAnchor:[1,-34],
 shadowSize:[41,41]
 });
 
+const yellowIcon = new L.Icon({
+iconUrl:"https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png",
+shadowUrl:"https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+iconSize:[25,41],
+iconAnchor:[12,41],
+popupAnchor:[1,-34],
+shadowSize:[41,41]
+});
+
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 {
@@ -398,6 +408,7 @@ let editMode=false;
 let addMode=false;
 let deleteMode=false;
 let insertMode=false;
+let mailboxMode=false;
 let insertAfterIndex=null;
 let myLocation;
 let followMe=false;
@@ -418,7 +429,18 @@ points.forEach((p,index)=>{
 
 let marker;
 
-if(
+if(p.briefkasten){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:yellowIcon
+}
+);
+
+}
+else if(
 highlightedStreet &&
 getStreetName(p)===highlightedStreet
 ){
@@ -477,6 +499,15 @@ if(p.done){
 marker.setOpacity(0.35);
 }
 
+if(p.briefkasten){
+
+marker.bindPopup(
+"<b>📮 Post-Briefkasten leeren</b><br>"+
+(p.adresse||"")
+);
+
+}else{
+
 marker.bindPopup(
 "<b>"+
 (index+1)+". "+
@@ -496,6 +527,8 @@ marker.bindPopup(
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
+
+}
 
 marker.on("dragend",function(e){
 points[index].lat=e.target.getLatLng().lat;
@@ -546,6 +579,36 @@ localStorage.setItem("zustellpunkte",JSON.stringify(points));
 }
 
 map.on("click",function(e){
+
+if(mailboxMode){
+
+const adresse = prompt(
+"Adresse/Standort des Post-Briefkastens eingeben:"
+);
+
+if(!adresse){
+return;
+}
+
+points.push({
+lat:e.latlng.lat,
+lng:e.latlng.lng,
+adresse:adresse,
+firma:"",
+hinweis:"Post-Briefkasten leeren",
+empfaenger:[],
+briefkasten:true
+});
+
+saveCurrent();
+draw();
+
+mailboxMode=false;
+
+alert("Post-Briefkasten wurde hinzugefügt.");
+
+return;
+}
 
 if(!addMode){
 return;
@@ -700,7 +763,30 @@ alert("Einfügen AUS.");
 draw();
 
 }
-  
+
+function toggleMailboxMode(){
+
+mailboxMode=!mailboxMode;
+
+if(mailboxMode){
+
+addMode=false;
+editMode=false;
+deleteMode=false;
+insertMode=false;
+
+alert("Post-Briefkasten-Modus AN. Tippe auf die Karte, wo der Briefkasten steht.");
+
+}else{
+
+alert("Post-Briefkasten-Modus AUS.");
+
+}
+
+draw();
+
+}
+
 function toggleAddMode(){
 
 addMode=!addMode;
