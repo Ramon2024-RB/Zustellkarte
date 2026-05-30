@@ -384,8 +384,31 @@ map.removeLayer(line);
 
 points.forEach((p,index)=>{
 
-const marker =L.marker([p.lat,p.lng],{draggable:editMode});
+let marker;
 
+if(
+highlightedStreet &&
+getStreetName(p)===highlightedStreet
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:true,
+icon:greenIcon
+}
+);
+
+}else{
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:true
+}
+);
+
+}
 marker.addTo(map);
 if(highlightedStreet){
 
