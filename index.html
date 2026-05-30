@@ -214,8 +214,7 @@ attribution:"&copy; OpenStreetMap"
 ).addTo(map);
 
 let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
-let markerList=[];
-const markers =L.markerClusterGroup();
+let markers=[];
 let line;
 let editMode=false;
 let addMode=false;
@@ -228,13 +227,8 @@ let nextIndex=0;
 
 function draw(){
 
-markers.clearLayers();
-
-markerList.forEach(
-m=>markers.removeLayer(m)
-);
-
-markerList=[];
+markers.forEach(m=>map.removeLayer(m));
+markers=[];
 
 if(line){
 map.removeLayer(line);
@@ -244,7 +238,7 @@ points.forEach((p,index)=>{
 
 const marker =L.marker([p.lat,p.lng],{draggable:editMode});
 
-markers.addLayer(marker);
+marker.addTo(map);
 
 marker.bindPopup(
 "<b>"+(index+1)+". "+(p.adresse||"Haus")+"</b>"+
@@ -288,7 +282,7 @@ editPoint(index);
 
 });
 
-markerList.push(marker);
+markers.push(marker);
 
 });
 
