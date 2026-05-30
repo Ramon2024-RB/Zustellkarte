@@ -1035,10 +1035,19 @@ function(e){
 
 try{
 
-points =
+const data =
 JSON.parse(
 e.target.result
 );
+
+if(Array.isArray(data)){
+points=data;
+}else if(Array.isArray(data.points)){
+points=data.points;
+}else{
+alert("Datei ungültig: Keine Zustellpunkte gefunden.");
+return;
+}
 
 saveCurrent();
 
