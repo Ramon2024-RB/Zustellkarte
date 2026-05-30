@@ -186,63 +186,79 @@ height:calc(100vh - 56px);
 
 <body>
 
-<div id="bar">
+<div class="appTop">
 
-<button onclick="nextStop()">Nächster Zustellpunkt</button>
-<button onclick="jumpToMyLocation()">Mein Standort</button>
-<button onclick="toggleFollow()">Folgen</button>
-<button onclick="distanceToNext()">Entfernung</button>
-<button onclick="showStreetList()">Straßen</button>
-<button onclick="reportMissingHouse()">Haus fehlt</button>
-<button onclick="importAddressList()">Adressliste importieren</button>
+<button class="iconBtn" onclick="openSidebar()">☰</button>
 
-<div id="progressText" style="
-display:inline-block;
-padding:8px 12px;
-margin:4px;
-background:#eef3ff;
-border-radius:999px;
-font-weight:bold;
-">
-0 / 0 erledigt
+<div class="appTitle">Zustellkarte</div>
+
+<div id="progressText">0 / 0 erledigt</div>
+
 </div>
+
+
+<div id="sidebar" class="sidebar">
+
+<div class="sidebarHeader">
+<h2>Menü</h2>
+<button class="iconBtn" onclick="closeSidebar()">×</button>
+</div>
+
+
+<div class="section">
+<div class="sectionTitle">Bezirk</div>
+
+<input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
+
+<button onclick="saveDistrict()">Bezirk speichern</button>
+<button onclick="loadDistrict()">Bezirk laden</button>
+<button onclick="downloadDistrictFile()">Bezirkdatei downloaden</button>
 
 <select id="bezirkListe"></select>
 
-<br>
-
-<input
-id="searchInput"
-placeholder="Straße + Hausnummer + Ort (z.B. Hauptstraße 12, München)">
-<button onclick="searchAddress()">Suchen</button>
-
-<details>
-<summary>Bearbeitungsmodus</summary>
-
-<br>
-
-<input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
-<button onclick="saveDistrict()">Bezirk speichern</button>
-<button onclick="downloadDistrictFile()">
-Bezirkdatei downloaden
-</button>
-
-<button onclick="showQRCode()">
-QR-Code anzeigen
-</button>
-
-<button onclick="loadDistrict()">Bezirk laden</button>
-
 <input type="file" id="importFile" accept=".json" onchange="importDistrict()">
+</div>
 
-<br>
+
+<div class="section">
+<div class="sectionTitle">Suche</div>
+
+<input id="searchInput" placeholder="Straße + Hausnummer + Ort">
+<button onclick="searchAddress()">Suchen</button>
+<button onclick="showStreetList()">Straßen</button>
+</div>
+
+
+<div class="section">
+<div class="sectionTitle">Bearbeitung</div>
 
 <input id="empfaenger" placeholder="Empfänger">
 <input id="adresse" placeholder="Adresse">
 <input id="firma" placeholder="Firma">
 <input id="hinweis" placeholder="Hinweis">
 
-</details>
+<button onclick="importAddressList()">Adressliste importieren</button>
+</div>
+
+
+<div class="section">
+<div class="sectionTitle">Extras</div>
+
+<button onclick="reportMissingHouse()">Haus fehlt melden</button>
+<button onclick="showQRCode()">QR-Code anzeigen</button>
+</div>
+
+
+<div class="section">
+<div class="sectionTitle">Navigation</div>
+
+<button onclick="nextStop()">Nächster Zustellpunkt</button>
+<button onclick="jumpToMyLocation()">Mein Standort</button>
+<button onclick="toggleFollow()">Folgen</button>
+<button onclick="distanceToNext()">Entfernung</button>
+</div>
+
+</div>
 
 <div id="map"></div>
 
