@@ -1014,7 +1014,8 @@ nextIndex=0;
 
 function importDistrict(){
 
-const file=document.getElementById("importFile").files[0];
+const input=document.getElementById("importFile");
+const file=input.files[0];
 
 if(!file){
 alert("Keine Datei ausgewählt");
@@ -1031,10 +1032,10 @@ const data=JSON.parse(e.target.result);
 
 if(Array.isArray(data)){
 points=data;
-}else if(data.points && Array.isArray(data.points)){
+}else if(data && Array.isArray(data.points)){
 points=data.points;
 }else{
-alert("Datei ungültig");
+alert("Datei ungültig: Keine Punktliste gefunden");
 return;
 }
 
@@ -1045,7 +1046,7 @@ alert("Bezirk geladen: "+points.length+" Stopps");
 
 }catch(err){
 
-alert("Datei ungültig");
+alert("Datei ungültig: "+err.message);
 
 }
 
