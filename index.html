@@ -1055,53 +1055,6 @@ reader.readAsText(file);
 
 }
 
-const reader =
-new FileReader();
-
-reader.onload =
-function(e){
-
-try{
-
-const data =
-JSON.parse(
-e.target.result
-);
-
-if(Array.isArray(data)){
-points=data;
-}else if(Array.isArray(data.points)){
-points=data.points;
-}else{
-alert("Datei ungültig: Keine Zustellpunkte gefunden.");
-return;
-}
-
-saveCurrent();
-
-draw();
-
-alert(
-"Bezirk geladen"
-);
-
-}catch{
-
-alert(
-"Datei ungültig"
-);
-
-}
-
-};
-
-reader.readAsText(
-file
-);
-
-}
-updateDistrictList();
-
 function toggleFab(){
 document
 .getElementById("fabMenu")
