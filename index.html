@@ -1380,7 +1380,9 @@ document.getElementById("progressSmall");
 
 if(ring){
 ring.style.background=
-"conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
+document.body.classList.contains("dark")
+? "conic-gradient(#f59e0b "+percent+"%, #334155 "+percent+"%)"
+: "conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
 }
 
 if(percentText){
