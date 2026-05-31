@@ -227,6 +227,14 @@ width:100%;
 </div>
 
 <div class="section">
+<div class="sectionTitle">Suche</div>
+
+<input id="searchInput" placeholder="Straße + Hausnummer + Ort">
+<button onclick="searchAddress()">Suchen</button>
+<button onclick="showStreetList()">Straßen</button>
+</div>
+
+<div class="section">
 <div class="sectionTitle">Bezirk</div>
 
 <input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
@@ -239,16 +247,6 @@ width:100%;
 
 <input type="file" id="importFile" accept=".json" onchange="importDistrict()">
 </div>
-
-
-<div class="section">
-<div class="sectionTitle">Suche</div>
-
-<input id="searchInput" placeholder="Straße + Hausnummer + Ort">
-<button onclick="searchAddress()">Suchen</button>
-<button onclick="showStreetList()">Straßen</button>
-</div>
-
 
 <div class="section">
 <div class="sectionTitle">Bearbeitung</div>
