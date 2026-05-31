@@ -378,11 +378,12 @@ color:#ffffff;
 </div>
 
 <div class="section">
-<div class="sectionTitle" onclick="toggleEditSection()">
-✏️ Bearbeitung ▼
+<div class="sectionTitle" onclick="unlockEditSection()">
+🔒 Bearbeitung
 </div>
 
 <div id="editSection" style="display:none;">
+<button onclick="lockEditSection()">🔒 Bearbeitung sperren</button>
 
 <input id="empfaenger" placeholder="Empfänger">
 <input id="adresse" placeholder="Adresse">
@@ -541,6 +542,10 @@ showCoverageOnHover:false
 });
 let line;
 let editMode=false;
+const ADMIN_PIN="0904";
+let editUnlocked=false;
+let editUnlockTimer=null;
+const EDIT_UNLOCK_TIME=10*60*1000;
 let addMode=false;
 let deleteMode=false;
 let insertMode=false;
@@ -659,13 +664,49 @@ renderNotes();
 
 }
 
-function toggleEditSection(){
+function unlockEditSection(){
+
+if(!editUnlocked){
+
+const pin=prompt("PIN für Bearbeitung eingeben:");
+
+if(pin!==ADMIN_PIN){
+alert("Falscher PIN");
+return;
+}
+
+editUnlocked=true;
+
+}
 
 const box=document.getElementById("editSection");
 
-if(box.style.display==="none"){
+if(box){
 box.style.display="block";
-}else{
+}
+
+if(editUnlockTimer){
+clearTimeout(editUnlockTimer);
+}
+
+editUnlockTimer=setTimeout(function(){
+lockEditSection();
+},EDIT_UNLOCK_TIME);
+
+}
+
+function lockEditSection(){
+
+editUnlocked=false;
+
+if(editUnlockTimer){
+clearTimeout(editUnlockTimer);
+editUnlockTimer=null;
+}
+
+const box=document.getElementById("editSection");
+
+if(box){
 box.style.display="none";
 }
 
