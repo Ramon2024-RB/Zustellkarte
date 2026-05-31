@@ -489,39 +489,6 @@ margin:auto;
 </div>
 </div>
 
-<div id="editPointModal" class="modal" style="display:none;">
-
-<div class="modalContent">
-
-<h2>✏️ Zustellpunkt bearbeiten</h2>
-
-<label>Adresse</label>
-<input id="editAdresse">
-
-<label>Empfänger</label>
-<textarea id="editEmpfaenger" placeholder="Ein Empfänger pro Zeile"></textarea>
-
-<label>Firma</label>
-<input id="editFirma">
-
-<label>Hinweis</label>
-<textarea id="editHinweis"></textarea>
-
-<label class="checkRow">
-<input type="checkbox" id="editBriefkasten">
-📮 Post-Briefkasten
-</label>
-
-<br>
-
-<button onclick="savePointEdit()">💾 Speichern</button>
-<button onclick="closePointEdit()">Abbrechen</button>
-<button onclick="deletePointFromEdit()">🗑️ Löschen</button>
-
-</div>
-
-</div>
-
 <script>
 const map=L.map("map").setView([50,10],14);
 
@@ -818,84 +785,6 @@ updateProgress();
 
 }
 
-let editingPointIndex=null;
-
-function openPointEdit(index){
-
-editingPointIndex=index;
-
-const p=points[index];
-
-document.getElementById("editAdresse").value=p.adresse||"";
-document.getElementById("editFirma").value=p.firma||"";
-document.getElementById("editHinweis").value=p.hinweis||"";
-
-document.getElementById("editBriefkasten").checked=
-p.briefkasten===true;
-
-document.getElementById("editEmpfaenger").value=
-(p.empfaenger||[])
-.join("\n");
-
-document.getElementById("editPointModal").style.display="flex";
-
-}
-
-function closePointEdit(){
-
-editingPointIndex=null;
-
-document.getElementById("editPointModal").style.display="none";
-
-}
-
-function savePointEdit(){
-
-if(editingPointIndex===null){
-return;
-}
-
-const p=points[editingPointIndex];
-
-p.adresse=document.getElementById("editAdresse").value.trim();
-
-p.firma=document.getElementById("editFirma").value.trim();
-
-p.hinweis=document.getElementById("editHinweis").value.trim();
-
-p.briefkasten=document.getElementById("editBriefkasten").checked;
-
-p.empfaenger=
-document.getElementById("editEmpfaenger")
-.value
-.split("\n")
-.map(e=>e.trim())
-.filter(e=>e.length>0);
-
-saveCurrent();
-draw();
-closePointEdit();
-
-}
-
-function deletePointFromEdit(){
-
-if(editingPointIndex===null){
-return;
-}
-
-if(!confirm("Diesen Zustellpunkt wirklich löschen?")){
-return;
-}
-
-points.splice(editingPointIndex,1);
-
-saveCurrent();
-draw();
-closePointEdit();
-
-}
-
 function draw(){
 
 clusterLayer.clearLayers();
@@ -974,7 +863,6 @@ marker.bindPopup(
 "<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
 "<button onclick='navigateGoogle("+index+")'>📍 Google</button>"+
 "<br><br>"+
-"<button onclick='openPointEdit("+index+")'>✏️ Bearbeiten</button>"
 );
 
 }else{
@@ -997,7 +885,6 @@ marker.bindPopup(
 "<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
 "<button onclick='navigateGoogle("+index+")'>📍 Google</button>"+
 "<br><br>"+
-"<button onclick='openPointEdit("+index+")'>✏️ Bearbeiten</button>"
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
