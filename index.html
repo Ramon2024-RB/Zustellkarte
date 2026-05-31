@@ -155,7 +155,7 @@ cursor:pointer;
 }
 
 #map{
-height:calc(100vh - 56px);
+height:calc(100vh - 90px);
 width:100%;
 }
 
@@ -448,6 +448,42 @@ color:#f8fafc;
 border-color:#334155;
 }
 
+#statusBar{
+height:34px;
+display:flex;
+align-items:center;
+padding:0 10px;
+font-size:13px;
+font-weight:700;
+background:#ffffff;
+color:#111827;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+white-space:nowrap;
+overflow-x:auto;
+}
+
+#editStatusBar{
+height:32px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+font-weight:800;
+background:#ff9800;
+color:white;
+box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+
+body.dark #statusBar{
+background:#111827;
+color:#f8fafc;
+}
+
+body.dark #editStatusBar{
+background:#f59e0b;
+color:#111827;
+}
+
 </style>
 </head>
 
@@ -464,6 +500,14 @@ border-color:#334155;
 <div id="progressSmall">0/0</div>
 </div>
 
+</div>
+
+<div id="editStatusBar" style="display:none;">
+✏️ Bearbeitungsmodus aktiv
+</div>
+
+<div id="statusBar">
+📍 Kein Bezirk | 🏠 0 Stopps | 📮 0 Briefkästen | ✅ 0 erledigt | ⏳ 0 offen
 </div>
 
 
@@ -986,6 +1030,48 @@ box.appendChild(btn);
 
 }
 
+function updateStatusBar(){
+
+const bar=document.getElementById("statusBar");
+
+if(!bar){
+return;
+}
+
+const bezirk=
+document.getElementById("bezirkName")?.value?.trim() ||
+localStorage.getItem("letzterBezirk") ||
+"Kein Bezirk";
+
+const total=points.length;
+
+const done=points.filter(p=>p.done).length;
+
+const open=total-done;
+
+const mailboxes=points.filter(p=>p.briefkasten).length;
+
+bar.textContent=
+"📍 "+bezirk+
+" | 🏠 "+total+" Stopps"+
+" | 📮 "+mailboxes+" Briefkästen"+
+" | ✅ "+done+" erledigt"+
+" | ⏳ "+open+" offen";
+
+}
+
+function updateEditStatusBar(){
+
+const bar=document.getElementById("editStatusBar");
+
+if(!bar){
+return;
+}
+
+bar.style.display=editMode ? "flex" : "none";
+
+}
+
 function draw(){
 
 clusterLayer.clearLayers();
@@ -1144,6 +1230,8 @@ map.addLayer(clusterLayer);
 
 updateProgress();
 renderMailboxList();
+updateStatusBar();
+updateEditStatusBar();
 
 }
 
