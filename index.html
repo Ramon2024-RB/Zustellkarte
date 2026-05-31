@@ -377,6 +377,77 @@ color:#f8fafc;
 border-color:#334155;
 }
 
+.modal{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.55);
+z-index:20000;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:16px;
+}
+
+.modalContent{
+background:white;
+color:#111;
+width:100%;
+max-width:420px;
+border-radius:18px;
+padding:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+.modalContent h2{
+margin-top:0;
+}
+
+.modalContent label{
+font-weight:700;
+font-size:14px;
+display:block;
+margin-top:10px;
+}
+
+.modalContent input,
+.modalContent textarea{
+width:100%;
+border:1px solid #d5dbe3;
+border-radius:12px;
+padding:11px;
+font-size:15px;
+}
+
+.modalContent textarea{
+min-height:70px;
+resize:vertical;
+}
+
+.checkRow{
+display:flex!important;
+align-items:center;
+gap:8px;
+}
+
+.checkRow input{
+width:auto;
+}
+
+body.dark .modalContent{
+background:#1e293b;
+color:#f8fafc;
+}
+
+body.dark .modalContent input,
+body.dark .modalContent textarea{
+background:#0f172a;
+color:#f8fafc;
+border-color:#334155;
+}
+
 </style>
 </head>
 
@@ -458,12 +529,10 @@ border-color:#334155;
 <input id="hinweis" placeholder="Hinweis">
 
 <button onclick="toggleAddMode()">Zustellstopp hinzufügen</button>
-<button onclick="toggleEdit()">Zustellstopp bearbeiten</button>
 <button onclick="toggleDeleteMode()">Zustellstopp löschen</button>
 <button onclick="toggleInsertMode()">Zwischenstopp einfügen</button>
 <button onclick="toggleMailboxMode()">📮 Post-Briefkasten hinzufügen</button>
 <button onclick="toggleMailboxInsertMode()">📮 Briefkasten zwischen Stopps</button>
-<button onclick="clearRoute()">Aktuelle Route löschen</button>
 
 <button onclick="importAddressList()">Adressliste importieren</button>
 </div>
@@ -556,6 +625,39 @@ margin:auto;
 </div>
 </div>
 
+<div id="markerEditBox" class="modal" style="display:none;">
+
+<div class="modalContent">
+
+<h2>✏️ Zustellpunkt bearbeiten</h2>
+
+<label>Empfänger</label>
+<textarea id="modalEmpfaenger" placeholder="Ein Empfänger pro Zeile"></textarea>
+
+<label>Adresse</label>
+<input id="modalAdresse">
+
+<label>Firma</label>
+<input id="modalFirma">
+
+<label>Hinweis / Notiz</label>
+<textarea id="modalHinweis"></textarea>
+
+<label class="checkRow">
+<input type="checkbox" id="modalBriefkasten">
+📮 Post-Briefkasten
+</label>
+
+<br>
+
+<button onclick="saveMarkerEdit()">💾 Speichern</button>
+<button onclick="deleteMarkerEdit()">🗑️ Löschen</button>
+<button onclick="closeMarkerEdit()">Abbrechen</button>
+
+</div>
+
+</div>
+
 <script>
 const map=L.map("map").setView([50,10],14);
 
@@ -609,10 +711,10 @@ showCoverageOnHover:false
 });
 let line;
 let editMode=false;
-const ADMIN_PIN="0904";
-let editUnlocked=false;
+const ADMIN_PIN="1234";
 let editUnlockTimer=null;
-const EDIT_UNLOCK_TIME=10*60*1000;
+const EDIT_UNLOCK_TIME=5*60*1000;
+let editingMarkerIndex=null;
 let addMode=false;
 let deleteMode=false;
 let insertMode=false;
@@ -1139,44 +1241,71 @@ draw();
 
 function editPoint(index){
 
+editingMarkerIndex=index;
+
 const p=points[index];
 
-const neueEmpfaenger=prompt(
-"Empfänger bearbeiten, getrennt mit ;",
-(p.empfaenger||[p.name||""]).join("; ")
-);
-if(neueEmpfaenger===null){return;}
+document.getElementById("modalEmpfaenger").value=
+(p.empfaenger||[])
+.join("\n");
 
-const neueAdresse=prompt("Adresse bearbeiten:",p.adresse||"");
-if(neueAdresse===null){return;}
+document.getElementById("modalAdresse").value=p.adresse||"";
+document.getElementById("modalFirma").value=p.firma||"";
+document.getElementById("modalHinweis").value=p.hinweis||"";
+document.getElementById("modalBriefkasten").checked=p.briefkasten===true;
 
-const neueFirma=prompt("Firma bearbeiten:",p.firma||"");
-if(neueFirma===null){return;}
+document.getElementById("markerEditBox").style.display="flex";
 
-const neuerHinweis=prompt("Hinweis bearbeiten:",p.hinweis||"");
-if(neuerHinweis===null){return;}
+}
 
-points[index].empfaenger=
-neueEmpfaenger
-.split(";")
-.map(
-e=>e.trim()
-)
-.filter(
-e=>e.length>0
-);
+function closeMarkerEdit(){
 
-points[index].adresse=
-neueAdresse;
+editingMarkerIndex=null;
+document.getElementById("markerEditBox").style.display="none";
 
-points[index].firma=
-neueFirma;
+}
 
-points[index].hinweis=
-neuerHinweis;
+function saveMarkerEdit(){
+
+if(editingMarkerIndex===null){
+return;
+}
+
+const p=points[editingMarkerIndex];
+
+p.empfaenger=
+document.getElementById("modalEmpfaenger")
+.value
+.split("\n")
+.map(e=>e.trim())
+.filter(e=>e.length>0);
+
+p.adresse=document.getElementById("modalAdresse").value.trim();
+p.firma=document.getElementById("modalFirma").value.trim();
+p.hinweis=document.getElementById("modalHinweis").value.trim();
+p.briefkasten=document.getElementById("modalBriefkasten").checked;
 
 saveCurrent();
 draw();
+closeMarkerEdit();
+
+}
+
+function deleteMarkerEdit(){
+
+if(editingMarkerIndex===null){
+return;
+}
+
+if(!confirm("Diesen Zustellpunkt wirklich löschen?")){
+return;
+}
+
+points.splice(editingMarkerIndex,1);
+
+saveCurrent();
+draw();
+closeMarkerEdit();
 
 }
 
@@ -1329,22 +1458,44 @@ draw();
 
 function toggleEdit(){
 
-editMode=!editMode;
+if(!editMode){
 
-if(editMode){
+const pin=prompt("PIN für Bearbeitungsmodus eingeben:");
 
-deleteMode=false;
+if(pin!==ADMIN_PIN){
+alert("Falscher PIN");
+return;
+}
+
+editMode=true;
 addMode=false;
+deleteMode=false;
+insertMode=false;
+mailboxMode=false;
+mailboxInsertMode=false;
 
-alert(
-"Bearbeitung AN"
-);
+alert("Bearbeitungsmodus AN. Tippe einen Marker an, um ihn zu bearbeiten.");
+
+if(editUnlockTimer){
+clearTimeout(editUnlockTimer);
+}
+
+editUnlockTimer=setTimeout(function(){
+editMode=false;
+draw();
+alert("Bearbeitungsmodus automatisch gesperrt.");
+},EDIT_UNLOCK_TIME);
 
 }else{
 
-alert(
-"Bearbeitung AUS"
-);
+editMode=false;
+
+if(editUnlockTimer){
+clearTimeout(editUnlockTimer);
+editUnlockTimer=null;
+}
+
+alert("Bearbeitungsmodus AUS.");
 
 }
 
