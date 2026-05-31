@@ -740,6 +740,8 @@ document.body.classList.contains("dark")
 : "0"
 );
 
+updateProgress();
+
 }
 
 function draw(){
@@ -1382,33 +1384,25 @@ document.getElementById("progressSmall");
 
 if(ring){
 
-const isDark=document.body.classList.contains("dark");
+const isDark=
+document.body.classList.contains("dark");
+
+if(isDark){
 
 ring.style.background=
-isDark
-? "conic-gradient(#f59e0b "+percent+"%, #1e293b "+percent+"%)"
-: "conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
+"conic-gradient(#f59e0b "+percent+"%, #1e293b "+percent+"%)";
 
-ring.style.color=
-isDark
-? "#ffffff"
-: "#111111";
+ring.style.color="#ffffff";
+ring.style.border="2px solid #334155";
 
-ring.style.border=
-isDark
-? "2px solid #334155"
-: "none";
+}else{
 
-}
+ring.style.background=
+"conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
 
-if(percentText){
-percentText.textContent=
-percent+"%";
-}
+ring.style.color="#111111";
+ring.style.border="none";
 
-if(small){
-small.textContent=
-done+"/"+total;
 }
 
 }
