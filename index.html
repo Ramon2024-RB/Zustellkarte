@@ -1369,39 +1369,37 @@ function updateProgress(){
 
 const total=points.length;
 const done=points.filter(p=>p.done).length;
+
 const percent=total
 ? Math.round((done/total)*100)
 : 0;
 
-const ring=
-document.getElementById("progressRing");
-
-const percentText=
-document.getElementById("progressPercent");
-
-const small=
-document.getElementById("progressSmall");
+const ring=document.getElementById("progressRing");
+const percentText=document.getElementById("progressPercent");
+const small=document.getElementById("progressSmall");
 
 if(ring){
 
-const isDark=
-document.body.classList.contains("dark");
+const isDark=document.body.classList.contains("dark");
 
-if(isDark){
+ring.style.background=isDark
+? "conic-gradient(#f59e0b "+percent+"%, #1e293b "+percent+"%)"
+: "conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
 
-ring.style.background=
-"conic-gradient(#f59e0b "+percent+"%, #1e293b "+percent+"%)";
+ring.style.color=isDark ? "#ffffff" : "#111111";
+ring.style.border=isDark ? "2px solid #334155" : "none";
 
-ring.style.color="#ffffff";
-ring.style.border="2px solid #334155";
+}
 
-}else{
+if(percentText){
+percentText.textContent=percent+"%";
+percentText.style.color=document.body.classList.contains("dark") ? "#ffffff" : "#111111";
+}
 
-ring.style.background=
-"conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
-
-ring.style.color="#111111";
-ring.style.border="none";
+if(small){
+small.textContent=done+"/"+total;
+small.style.color=document.body.classList.contains("dark") ? "#d1d5db" : "#111111";
+}
 
 }
 
