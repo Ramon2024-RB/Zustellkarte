@@ -249,7 +249,11 @@ width:100%;
 </div>
 
 <div class="section">
-<div class="sectionTitle">Bearbeitung</div>
+<div class="sectionTitle" onclick="toggleEditSection()">
+✏️ Bearbeitung ▼
+</div>
+
+<div id="editSection" style="display:none;">
 
 <input id="empfaenger" placeholder="Empfänger">
 <input id="adresse" placeholder="Adresse">
@@ -267,6 +271,7 @@ width:100%;
 <button onclick="importAddressList()">Adressliste importieren</button>
 </div>
 
+</div>
 
 <div class="section">
 <div class="sectionTitle">Extras</div>
