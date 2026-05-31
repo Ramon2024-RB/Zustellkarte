@@ -304,8 +304,10 @@ background:#374151;
 color:#f9fafb;
 }
 
-body.dark #progressRing{
-color:#f9fafb;
+body.dark #progressRing,
+body.dark #progressPercent,
+body.dark #progressSmall{
+color:#ffffff;
 }
 
 </style>
@@ -1380,20 +1382,22 @@ document.getElementById("progressSmall");
 
 if(ring){
 
-const bgColor=
-document.body.classList.contains("dark")
-? "#334155"
-: "#e9edf2";
+const isDark=document.body.classList.contains("dark");
 
-const textColor=
-document.body.classList.contains("dark")
+ring.style.background=
+isDark
+? "conic-gradient(#f59e0b "+percent+"%, #1e293b "+percent+"%)"
+: "conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
+
+ring.style.color=
+isDark
 ? "#ffffff"
 : "#111111";
 
-ring.style.background=
-"conic-gradient(#ff9800 "+percent+"%, "+bgColor+" "+percent+"%)";
-
-ring.style.color=textColor;
+ring.style.border=
+isDark
+? "2px solid #334155"
+: "none";
 
 }
 
