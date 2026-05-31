@@ -1379,10 +1379,22 @@ const small=
 document.getElementById("progressSmall");
 
 if(ring){
-ring.style.background=
+
+const bgColor=
 document.body.classList.contains("dark")
-? "conic-gradient(#f59e0b "+percent+"%, #334155 "+percent+"%)"
-: "conic-gradient(#ff9800 "+percent+"%, #e9edf2 "+percent+"%)";
+? "#334155"
+: "#e9edf2";
+
+const textColor=
+document.body.classList.contains("dark")
+? "#ffffff"
+: "#111111";
+
+ring.style.background=
+"conic-gradient(#ff9800 "+percent+"%, "+bgColor+" "+percent+"%)";
+
+ring.style.color=textColor;
+
 }
 
 if(percentText){
