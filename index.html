@@ -287,8 +287,8 @@ width:100%;
 <button class="fab-option" onclick="jumpToMyLocation()">📍</button>
 <button class="fab-option" onclick="toggleFollow()">🧭</button>
 <button class="fab-option" onclick="showStreetList()">🛣️</button>
-<button class="fab-option" onclick="distanceToNext()">📏</button>
-
+<button class="fab-option" onclick="startDelivery()">▶️</button>
+<button class="fab-option" onclick="stopDelivery()">⏹️</button>
 
 <button class="fab-main" onclick="toggleFab()">☰</button>
 
@@ -417,6 +417,8 @@ let insertAfterIndex=null;
 let mailboxMode=false;
 let mailboxInsertMode=false;
 let mailboxInsertAfterIndex=null;
+let deliveryMode=false;
+let autoDoneRadius=15;
 let myLocation;
 let followMe=false;
 let nextIndex=0;
@@ -1134,6 +1136,8 @@ if(followMe){
 map.setView([lat,lng],18);
 }
 
+checkAutoDone(lat,lng);
+
 },
 
 function(){
@@ -1599,6 +1603,50 @@ document.getElementById("sidebar").classList.add("open");
 
 function closeSidebar(){
 document.getElementById("sidebar").classList.remove("open");
+}
+
+function startDelivery(){
+deliveryMode=true;
+alert("Zustellung gestartet. Stopps werden automatisch erledigt, wenn du nah genug bist.");
+}
+
+function stopDelivery(){
+deliveryMode=false;
+alert("Zustellung gestoppt.");
+}
+
+function checkAutoDone(lat,lng){
+
+if(!deliveryMode){
+return;
+}
+
+points.forEach((p,index)=>{
+
+if(p.done){
+return;
+}
+
+if(p.briefkasten){
+return;
+}
+
+const dist=map.distance(
+[lat,lng],
+[p.lat,p.lng]
+);
+
+if(dist<=autoDoneRadius){
+
+points[index].done=true;
+
+}
+
+});
+
+saveCurrent();
+draw();
+
 }
 
 showLocation();
