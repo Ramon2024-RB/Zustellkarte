@@ -489,6 +489,39 @@ margin:auto;
 </div>
 </div>
 
+<div id="editPointModal" class="modal" style="display:none;">
+
+<div class="modalContent">
+
+<h2>✏️ Zustellpunkt bearbeiten</h2>
+
+<label>Adresse</label>
+<input id="editAdresse">
+
+<label>Empfänger</label>
+<textarea id="editEmpfaenger" placeholder="Ein Empfänger pro Zeile"></textarea>
+
+<label>Firma</label>
+<input id="editFirma">
+
+<label>Hinweis</label>
+<textarea id="editHinweis"></textarea>
+
+<label class="checkRow">
+<input type="checkbox" id="editBriefkasten">
+📮 Post-Briefkasten
+</label>
+
+<br>
+
+<button onclick="savePointEdit()">💾 Speichern</button>
+<button onclick="closePointEdit()">Abbrechen</button>
+<button onclick="deletePointFromEdit()">🗑️ Löschen</button>
+
+</div>
+
+</div>
+
 <script>
 const map=L.map("map").setView([50,10],14);
 
@@ -785,6 +818,84 @@ updateProgress();
 
 }
 
+let editingPointIndex=null;
+
+function openPointEdit(index){
+
+editingPointIndex=index;
+
+const p=points[index];
+
+document.getElementById("editAdresse").value=p.adresse||"";
+document.getElementById("editFirma").value=p.firma||"";
+document.getElementById("editHinweis").value=p.hinweis||"";
+
+document.getElementById("editBriefkasten").checked=
+p.briefkasten===true;
+
+document.getElementById("editEmpfaenger").value=
+(p.empfaenger||[])
+.join("\n");
+
+document.getElementById("editPointModal").style.display="flex";
+
+}
+
+function closePointEdit(){
+
+editingPointIndex=null;
+
+document.getElementById("editPointModal").style.display="none";
+
+}
+
+function savePointEdit(){
+
+if(editingPointIndex===null){
+return;
+}
+
+const p=points[editingPointIndex];
+
+p.adresse=document.getElementById("editAdresse").value.trim();
+
+p.firma=document.getElementById("editFirma").value.trim();
+
+p.hinweis=document.getElementById("editHinweis").value.trim();
+
+p.briefkasten=document.getElementById("editBriefkasten").checked;
+
+p.empfaenger=
+document.getElementById("editEmpfaenger")
+.value
+.split("\n")
+.map(e=>e.trim())
+.filter(e=>e.length>0);
+
+saveCurrent();
+draw();
+closePointEdit();
+
+}
+
+function deletePointFromEdit(){
+
+if(editingPointIndex===null){
+return;
+}
+
+if(!confirm("Diesen Zustellpunkt wirklich löschen?")){
+return;
+}
+
+points.splice(editingPointIndex,1);
+
+saveCurrent();
+draw();
+closePointEdit();
+
+}
+
 function draw(){
 
 clusterLayer.clearLayers();
@@ -861,7 +972,9 @@ marker.bindPopup(
 (p.adresse || "")+
 "<br><br>"+
 "<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
-"<button onclick='navigateGoogle("+index+")'>📍 Google</button>"
+"<button onclick='navigateGoogle("+index+")'>📍 Google</button>"+
+"<br><br>"+
+"<button onclick='openPointEdit("+index+")'>✏️ Bearbeiten</button>"
 );
 
 }else{
@@ -884,6 +997,7 @@ marker.bindPopup(
 "<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
 "<button onclick='navigateGoogle("+index+")'>📍 Google</button>"+
 "<br><br>"+
+"<button onclick='openPointEdit("+index+")'>✏️ Bearbeiten</button> "+
 "<button onclick='markDone("+index+")'>✓ Erledigt</button> "+
 "<button onclick='markOpen("+index+")'>↩ Offen</button>"
 );
@@ -2000,6 +2114,73 @@ renderNotes();
 // if ("serviceWorker" in navigator) {
 // navigator.serviceWorker.register("service-worker.js");
 // }
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,0.55);
+z-index:20000;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:16px;
+}
+
+.modalContent{
+background:white;
+color:#111;
+width:100%;
+max-width:420px;
+border-radius:18px;
+padding:18px;
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.modalContent h2{
+margin-top:0;
+}
+
+.modalContent label{
+font-weight:700;
+font-size:14px;
+display:block;
+margin-top:10px;
+}
+
+.modalContent textarea{
+width:100%;
+min-height:70px;
+border:1px solid #d5dbe3;
+border-radius:12px;
+padding:11px;
+font-size:15px;
+resize:vertical;
+}
+
+.checkRow{
+display:flex!important;
+align-items:center;
+gap:8px;
+}
+
+.checkRow input{
+width:auto;
+}
+
+body.dark .modalContent{
+background:#1e293b;
+color:#f8fafc;
+}
+
+body.dark .modalContent input,
+body.dark .modalContent textarea{
+background:#0f172a;
+color:#f8fafc;
+border-color:#334155;
+}
 
 </script>
 
