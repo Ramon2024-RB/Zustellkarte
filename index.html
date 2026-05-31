@@ -275,6 +275,19 @@ width:100%;
 
 <button onclick="reportMissingHouse()">Haus fehlt melden</button>
 <button onclick="showQRCode()">QR-Code anzeigen</button>
+
+<div class="sectionTitle">
+📝 Schnellnotizen
+</div>
+
+<button onclick="addNote()">
+➕ Neue Notiz
+</button>
+
+<div id="notesList"></div>
+
+</div>
+
 </div>
 
 </div>
@@ -401,6 +414,10 @@ attribution:"&copy; OpenStreetMap"
 ).addTo(map);
 
 let points=JSON.parse(localStorage.getItem("zustellpunkte")||"[]");
+let notes=
+JSON.parse(
+localStorage.getItem("notes")||"[]"
+);
 let markers=[];
 const clusterLayer = L.markerClusterGroup({
 maxClusterRadius:45,
@@ -449,6 +466,139 @@ p.lat+
 ","+
 p.lng,
 "_blank"
+);
+
+}
+
+function saveNotes(){
+
+localStorage.setItem(
+"notes",
+JSON.stringify(notes)
+);
+
+}
+
+function addNote(){
+
+const ort=
+prompt(
+"Adresse / Ort:"
+);
+
+if(!ort){
+return;
+}
+
+const text=
+prompt(
+"Notiz:"
+);
+
+if(!text){
+return;
+}
+
+const now=
+new Date();
+
+const datum=
+now.toLocaleDateString("de-DE");
+
+const uhrzeit=
+now.toLocaleTimeString(
+"de-DE",
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+notes.unshift({
+
+datum:datum,
+uhrzeit:uhrzeit,
+ort:ort,
+text:text
+
+});
+
+saveNotes();
+renderNotes();
+
+}
+
+function deleteNote(index){
+
+if(
+!confirm(
+"Notiz löschen?"
+)
+){
+return;
+}
+
+notes.splice(index,1);
+
+saveNotes();
+renderNotes();
+
+}
+
+function renderNotes(){
+
+const box=
+document.getElementById(
+"notesList"
+);
+
+if(!box){
+return;
+}
+
+box.innerHTML="";
+
+notes.forEach(
+(n,index)=>{
+
+const div=
+document.createElement("div");
+
+div.style.border=
+"1px solid #ddd";
+
+div.style.padding=
+"8px";
+
+div.style.marginTop=
+"6px";
+
+div.style.borderRadius=
+"8px";
+
+div.innerHTML=
+
+"<b>📝 "+
+n.datum+
+" "+
+n.uhrzeit+
+"</b><br>"+
+
+"<b>"+
+n.ort+
+"</b><br>"+
+
+n.text+
+
+"<br><br>"+
+
+"<button onclick='deleteNote("+
+index+
+")'>🗑️ Löschen</button>";
+
+box.appendChild(div);
+
+}
 );
 
 }
@@ -1646,6 +1796,8 @@ points[index].done=true;
 
 saveCurrent();
 draw();
+
+renderNotes();
 
 }
 
