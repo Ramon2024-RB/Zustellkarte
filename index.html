@@ -484,6 +484,30 @@ background:#f59e0b;
 color:#111827;
 }
 
+.topSearch{
+flex:1;
+display:flex;
+gap:6px;
+align-items:center;
+max-width:520px;
+}
+
+.topSearch input{
+flex:1;
+height:38px;
+border-radius:999px;
+border:1px solid #d5dbe3;
+padding:0 12px;
+font-size:14px;
+}
+
+.topSearch button{
+height:38px;
+border-radius:999px;
+padding:0 12px;
+font-weight:700;
+}
+
 </style>
 </head>
 
@@ -494,6 +518,12 @@ color:#111827;
 <button class="iconBtn" onclick="openSidebar()">☰</button>
 
 <div class="appTitle">Zustellkarte</div>
+
+<div class="topSearch">
+<input id="topSearchInput" placeholder="Straße suchen">
+<button onclick="searchStreetTop()">Suchen</button>
+<button onclick="showStreetList()">Straßen</button>
+</div>
 
 <div id="progressRing">
 <div id="progressPercent">0%</div>
@@ -516,14 +546,6 @@ color:#111827;
 <div class="sidebarHeader">
 <h2>Menü</h2>
 <button class="iconBtn" onclick="closeSidebar()">×</button>
-</div>
-
-<div class="section">
-<div class="sectionTitle">Suche</div>
-
-<input id="searchInput" placeholder="Straße + Hausnummer + Ort">
-<button onclick="searchAddress()">Suchen</button>
-<button onclick="showStreetList()">Straßen</button>
 </div>
 
 <div class="section">
@@ -780,6 +802,20 @@ p.lat+
 p.lng,
 "_blank"
 );
+
+}
+
+function searchStreetTop(){
+
+const input=document.getElementById("topSearchInput");
+
+if(!input){
+return;
+}
+
+document.getElementById("searchInput").value=input.value;
+
+searchAddress();
 
 }
 
@@ -1966,7 +2002,7 @@ function searchAddress(){
 
 const query =
 document
-.getElementById("searchInput")
+.getElementById("topSearchInput")
 .value
 .trim();
 
