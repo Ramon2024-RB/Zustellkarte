@@ -1708,28 +1708,22 @@ draw();
 
 function toggleEdit(){
 
-if(!editMode){
+editMode=!editMode;
 
-const pin=prompt("PIN für Bearbeitungsmodus eingeben:");
+if(editMode){
 
-if(pin!==ADMIN_PIN){
-alert("Falscher PIN");
-return;
-}
-
-editMode=true;
 addMode=false;
 deleteMode=false;
 insertMode=false;
 mailboxMode=false;
 mailboxInsertMode=false;
 
-alert("Bearbeitungsmodus AN. Tippe einen Marker an, um ihn zu bearbeiten.");
+alert("Bearbeitungsmodus AN. Tippe einen Marker an.");
+
 closeSidebarAfterMode();
 
 }else{
 
-editMode=false;
 alert("Bearbeitungsmodus AUS.");
 
 }
