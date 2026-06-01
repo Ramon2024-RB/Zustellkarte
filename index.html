@@ -836,17 +836,6 @@ maxZoom:17
 
 });
 
-clusterLayer.on("clusterclick",function(e){
-
-const bounds=e.layer.getBounds();
-
-map.fitBounds(bounds,{
-paddingTopLeft:[0,150],
-paddingBottomRight:[0,50]
-});
-
-});
-
 let line;
 let editMode=false;
 const ADMIN_PIN="0904";
