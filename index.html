@@ -576,12 +576,6 @@ z-index:9999;
 
 <div class="appTitle">Zustellkarte</div>
 
-<div class="topSearch">
-<input id="topSearchInput" placeholder="Straße suchen">
-<button onclick="searchAddress()">Suchen</button>
-<button onclick="showStreetList()">Straßen</button>
-</div>
-
 <div id="progressRing">
 <div id="progressPercent">0%</div>
 <div id="progressSmall">0/0</div>
@@ -615,6 +609,27 @@ z-index:9999;
 <select id="bezirkListe"></select>
 
 <input type="file" id="importFile" accept=".json" onchange="importDistrict()">
+</div>
+
+<div class="section">
+
+<div class="sectionTitle">
+🔍 Suche
+</div>
+
+<input
+id="searchInput"
+placeholder="Straße oder Adresse suchen"
+>
+
+<button onclick="searchAddress()">
+🔍 Suchen
+</button>
+
+<button onclick="showStreetList()">
+🛣️ Straßenliste
+</button>
+
 </div>
 
 <div class="section">
@@ -2209,7 +2224,7 @@ function searchAddress(){
 
 const query =
 document
-.getElementById("topSearchInput")
+.getElementById("SearchInput")
 .value
 .trim();
 
