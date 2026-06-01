@@ -536,6 +536,24 @@ color:#ffffff;
 border-color:#60a5fa;
 }
 
+.houseNumberLabel{
+background:#ffffff;
+color:#111;
+border:1px solid #2563eb;
+border-radius:999px;
+font-size:11px;
+font-weight:800;
+text-align:center;
+line-height:18px;
+box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+
+body.dark .houseNumberLabel{
+background:#111827;
+color:#ffffff;
+border-color:#60a5fa;
+}
+
 </style>
 </head>
 
@@ -856,6 +874,56 @@ let followMe=false;
 let nextIndex=0;
 let activeStopIndex=null;
 let highlightedStreet=null;
+
+let numberLabels=[];
+
+function clearNumberLabels(){
+numberLabels.forEach(l=>map.removeLayer(l));
+numberLabels=[];
+}
+
+function getHouseNumber(p){
+const adresse=p.adresse||"";
+const match=adresse.match(/\b\d+[a-zA-Z]?\b/);
+return match ? match[0] : "";
+}
+
+function renderNumberLabels(){
+
+clearNumberLabels();
+
+if(map.getZoom()<18){
+return;
+}
+
+points.forEach(p=>{
+
+if(p.briefkasten){
+return;
+}
+
+const nr=getHouseNumber(p);
+
+if(!nr){
+return;
+}
+
+const label=L.marker([p.lat,p.lng],{
+interactive:false,
+icon:L.divIcon({
+className:"houseNumberLabel",
+html:nr,
+iconSize:[24,18],
+iconAnchor:[12,28]
+})
+}).addTo(map);
+
+numberLabels.push(label);
+
+});
+
+}
+
 
 function navigateApple(index){
 
@@ -1367,6 +1435,7 @@ updateProgress();
 renderMailboxList();
 updateStatusBar();
 updateEditStatusBar();
+renderNumberLabels();
 
 }
 
@@ -2511,6 +2580,14 @@ showLocation();
 draw();
 renderNotes();
 renderMailboxList();
+
+map.on("zoomend",function(){
+renderNumberLabels();
+});
+
+map.on("moveend",function(){
+renderNumberLabels();
+});
 
 setInterval(function(){
 saveCurrent();
