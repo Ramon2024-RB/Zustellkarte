@@ -817,7 +817,7 @@ localStorage.getItem("notes")||"[]"
 let markers=[];
 
 const clusterLayer = L.markerClusterGroup({
-maxClusterRadius:30,
+maxClusterRadius:45,
 disableClusteringAtZoom:18,
 spiderfyOnMaxZoom:true,
 showCoverageOnHover:false,
@@ -2523,10 +2523,6 @@ showLocation();
 draw();
 renderNotes();
 renderMailboxList();
-
-map.on("zoomend",function(){
-draw();
-});
 
 setInterval(function(){
 saveCurrent();
