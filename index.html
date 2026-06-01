@@ -1188,10 +1188,15 @@ bar.style.display=editMode ? "flex" : "none";
 function getHouseNumber(p){
 
 const adresse=p.adresse || "";
-
 const match=adresse.match(/\b\d+[a-zA-Z]?\b/);
 
 return match ? match[0] : "";
+
+}
+
+function shouldShowNumberMarkers(){
+
+return map.getZoom()>=18;
 
 }
 
@@ -1207,8 +1212,8 @@ return L.divIcon({
 className:"numberMarker",
 html:"<div>"+nr+"</div>",
 iconSize:[22,22],
-iconAnchor:[11,22],
-popupAnchor:[0,-20]
+iconAnchor:[11,11],
+popupAnchor:[0,-12]
 });
 
 }
@@ -1271,6 +1276,7 @@ marker=L.marker(
 [p.lat,p.lng],
 {
 draggable:editMode,
+icon:shouldShowNumberMarkers() ? numberIcon(p) : undefined
 }
 );
 
@@ -2517,6 +2523,10 @@ showLocation();
 draw();
 renderNotes();
 renderMailboxList();
+
+map.on("zoomend",function(){
+draw();
+});
 
 setInterval(function(){
 saveCurrent();
