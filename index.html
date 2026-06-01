@@ -592,12 +592,31 @@ font-weight:700;
 
 <div class="section">
 
-<div id="editSection">
+<button onclick="unlockEditPanel()">
+🔒 Bearbeitung öffnen
+</button>
 
-<button onclick="toggleAddMode()">Zustellstopp hinzufügen</button>
-<button onclick="toggleInsertMode()">Zwischenstopp einfügen</button>
-<button onclick="toggleEdit()">🔒 Bearbeitungsmodus</button>
+<div id="editSection" style="display:none;">
+
+<button onclick="lockEditPanel()">
+🔒 Bearbeitung schließen
+</button>
+
+<input id="empfaenger" placeholder="Empfänger">
+<input id="adresse" placeholder="Adresse">
+<input id="firma" placeholder="Firma">
+<input id="hinweis" placeholder="Hinweis">
+
+<button onclick="toggleEdit()">✏️ Marker bearbeiten</button>
+<button onclick="toggleAddMode()">➕ Zustellstopp hinzufügen</button>
+<button onclick="toggleInsertMode()">↔️ Zwischenstopp einfügen</button>
+<button onclick="toggleMailboxMode()">📮 Briefkasten hinzufügen</button>
+<button onclick="toggleMailboxInsertMode()">📮 Briefkasten zwischen Stopps</button>
+
 <button onclick="importAddressList()">Adressliste importieren</button>
+
+</div>
+
 </div>
 
 </div>
@@ -1536,9 +1555,12 @@ if(insertMode){
 addMode=true;
 editMode=false;
 deleteMode=false;
+mailboxMode=false;
+mailboxInsertMode=false;
 insertAfterIndex=null;
 
 alert("Einfügen AN. Tippe zuerst den Stopp an, NACH dem du einfügen willst.");
+closeSidebarAfterMode();
 
 }else{
 
@@ -1556,7 +1578,6 @@ draw();
 function toggleMailboxInsertMode(){
 
 mailboxInsertMode=!mailboxInsertMode;
-
 mailboxInsertAfterIndex=null;
 
 if(mailboxInsertMode){
@@ -1568,11 +1589,10 @@ insertMode=false;
 mailboxMode=false;
 
 alert("Briefkasten-Zwischenmodus AN. Tippe zuerst den Stopp an, nach dem der Briefkasten eingefügt werden soll.");
+closeSidebarAfterMode();
 
 }else{
-
 alert("Briefkasten-Zwischenmodus AUS.");
-
 }
 
 draw();
@@ -1589,16 +1609,54 @@ addMode=false;
 editMode=false;
 deleteMode=false;
 insertMode=false;
+mailboxInsertMode=false;
 
 alert("Post-Briefkasten-Modus AN. Tippe auf die Karte, wo der Briefkasten steht.");
+closeSidebarAfterMode();
 
 }else{
-
 alert("Post-Briefkasten-Modus AUS.");
-
 }
 
 draw();
+
+}
+
+function unlockEditPanel(){
+
+const pin=prompt("PIN für Bearbeitung eingeben:");
+
+if(pin!==ADMIN_PIN){
+alert("Falscher PIN");
+return;
+}
+
+document.getElementById("editSection").style.display="block";
+
+}
+
+function lockEditPanel(){
+
+document.getElementById("editSection").style.display="none";
+
+editMode=false;
+addMode=false;
+deleteMode=false;
+insertMode=false;
+mailboxMode=false;
+mailboxInsertMode=false;
+
+draw();
+
+}
+
+function closeSidebarAfterMode(){
+
+closeSidebar();
+
+setTimeout(function(){
+map.invalidateSize();
+},300);
 
 }
 
@@ -1607,9 +1665,16 @@ function toggleAddMode(){
 addMode=!addMode;
 
 if(addMode){
+
 editMode=false;
 deleteMode=false;
+insertMode=false;
+mailboxMode=false;
+mailboxInsertMode=false;
+
 alert("Hinzufügen ist AN. Tippe auf die Karte, um einen Zustellstopp zu setzen.");
+closeSidebarAfterMode();
+
 }else{
 alert("Hinzufügen ist AUS.");
 }
@@ -1660,26 +1725,11 @@ mailboxMode=false;
 mailboxInsertMode=false;
 
 alert("Bearbeitungsmodus AN. Tippe einen Marker an, um ihn zu bearbeiten.");
-
-if(editUnlockTimer){
-clearTimeout(editUnlockTimer);
-}
-
-editUnlockTimer=setTimeout(function(){
-editMode=false;
-draw();
-alert("Bearbeitungsmodus automatisch gesperrt.");
-},EDIT_UNLOCK_TIME);
+closeSidebarAfterMode();
 
 }else{
 
 editMode=false;
-
-if(editUnlockTimer){
-clearTimeout(editUnlockTimer);
-editUnlockTimer=null;
-}
-
 alert("Bearbeitungsmodus AUS.");
 
 }
