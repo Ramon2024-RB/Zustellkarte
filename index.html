@@ -520,6 +520,17 @@ font-weight:700;
 
 <body>
 
+<div id="modeBanner" style="
+display:none;
+background:#ff9800;
+color:white;
+font-weight:700;
+padding:10px;
+text-align:center;
+z-index:9999;
+">
+</div>
+
 <div class="appTop">
 
 <button class="iconBtn" onclick="openSidebar()">☰</button>
@@ -1667,16 +1678,20 @@ addMode=!addMode;
 if(addMode){
 
 editMode=false;
-deleteMode=false;
 insertMode=false;
 mailboxMode=false;
 mailboxInsertMode=false;
 
-alert("Hinzufügen ist AN. Tippe auf die Karte, um einen Zustellstopp zu setzen.");
-closeSidebarAfterMode();
+document.getElementById("modeBanner").style.display="block";
+document.getElementById("modeBanner").textContent=
+"➕ Zustellstopp hinzufügen";
+
+closeSidebar();
 
 }else{
-alert("Hinzufügen ist AUS.");
+
+document.getElementById("modeBanner").style.display="none";
+
 }
 
 draw();
