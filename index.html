@@ -771,10 +771,22 @@ let markers=[];
 
 const clusterLayer = L.markerClusterGroup({
 maxClusterRadius:45,
-disableClusteringAtZoom:17,
+disableClusteringAtZoom:18,
 spiderfyOnMaxZoom:true,
 showCoverageOnHover:false,
 zoomToBoundsOnClick:false
+});
+
+clusterLayer.on("clusterclick",function(e){
+
+const bounds=e.layer.getBounds();
+
+map.fitBounds(bounds,{
+paddingTopLeft:[0,220],
+paddingBottomRight:[0,100],
+maxZoom:18
+});
+
 });
 
 clusterLayer.on("clusterclick",function(e){
