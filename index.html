@@ -1565,20 +1565,21 @@ if(insertMode){
 
 addMode=true;
 editMode=false;
-deleteMode=false;
 mailboxMode=false;
 mailboxInsertMode=false;
 insertAfterIndex=null;
 
-alert("Einfügen AN. Tippe zuerst den Stopp an, NACH dem du einfügen willst.");
-closeSidebarAfterMode();
+document.getElementById("modeBanner").style.display="block";
+document.getElementById("modeBanner").textContent=
+"↔️ Zwischenstopp einfügen";
+
+closeSidebar();
 
 }else{
 
 addMode=false;
 insertAfterIndex=null;
-
-alert("Einfügen AUS.");
+document.getElementById("modeBanner").style.display="none";
 
 }
 
@@ -1595,15 +1596,19 @@ if(mailboxInsertMode){
 
 addMode=false;
 editMode=false;
-deleteMode=false;
 insertMode=false;
 mailboxMode=false;
 
-alert("Briefkasten-Zwischenmodus AN. Tippe zuerst den Stopp an, nach dem der Briefkasten eingefügt werden soll.");
-closeSidebarAfterMode();
+document.getElementById("modeBanner").style.display="block";
+document.getElementById("modeBanner").textContent=
+"📮 Briefkasten zwischen Stopps";
+
+closeSidebar();
 
 }else{
-alert("Briefkasten-Zwischenmodus AUS.");
+
+document.getElementById("modeBanner").style.display="none";
+
 }
 
 draw();
@@ -1618,15 +1623,19 @@ if(mailboxMode){
 
 addMode=false;
 editMode=false;
-deleteMode=false;
 insertMode=false;
 mailboxInsertMode=false;
 
-alert("Post-Briefkasten-Modus AN. Tippe auf die Karte, wo der Briefkasten steht.");
-closeSidebarAfterMode();
+document.getElementById("modeBanner").style.display="block";
+document.getElementById("modeBanner").textContent=
+"📮 Briefkasten hinzufügen";
+
+closeSidebar();
 
 }else{
-alert("Post-Briefkasten-Modus AUS.");
+
+document.getElementById("modeBanner").style.display="none";
+
 }
 
 draw();
