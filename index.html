@@ -635,6 +635,22 @@ placeholder="Straße oder Adresse suchen"
 <div class="section">
 <div class="sectionTitle">Extras</div>
 
+<div class="sectionTitle">
+📬 Zustellteil
+</div>
+
+<button onclick="setDeliveryPart('A')">
+🅰️ A-Teil
+</button>
+
+<button onclick="setDeliveryPart('B')">
+🅱️ B-Teil
+</button>
+
+<button onclick="setDeliveryPart('')">
+🔄 Alles anzeigen
+</button>
+
 <button onclick="reportMissingHouse()">Haus fehlt melden</button>
 <button onclick="showQRCode()">QR-Code anzeigen</button>
 <button onclick="toggleDarkMode()">🌙 Dunkelmodus</button>
@@ -793,6 +809,14 @@ margin:auto;
 📮 Post-Briefkasten
 </label>
 
+<label>Zustellteil</label>
+
+<select id="modalTeil">
+<option value="">Kein Teil</option>
+<option value="A">A-Teil</option>
+<option value="B">B-Teil</option>
+</select>
+
 <br>
 
 <button onclick="saveMarkerEdit()">💾 Speichern</button>
@@ -889,6 +913,7 @@ let followMe=false;
 let nextIndex=0;
 let activeStopIndex=null;
 let highlightedStreet=null;
+let activePart="";
 
 let numberLabels=[];
 
@@ -954,6 +979,14 @@ p.lng,
 
 }
 
+function setDeliveryPart(part){
+
+activePart=part;
+
+draw();
+
+}
+
 function searchStreetTop(){
 
 const input=document.getElementById("topSearchInput");
@@ -965,6 +998,14 @@ return;
 document.getElementById("searchInput").value=input.value;
 
 searchAddress();
+
+}
+
+function setDeliveryPart(part){
+
+activePart=part;
+
+draw();
 
 }
 
@@ -1315,6 +1356,48 @@ icon:yellowIcon
 
 }
 else if(
+activePart==="A" &&
+p.teil==="A"
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:greenIcon
+}
+);
+
+}
+else if(
+activePart==="B" &&
+p.teil==="B"
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:orangeIcon
+}
+);
+
+}
+else if(
+highlightedStreet &&
+getStreetName(p)===highlightedStreet
+){
+
+marker=L.marker(
+[p.lat,p.lng],
+{
+draggable:editMode,
+icon:greenIcon
+}
+);
+
+}
+else if(
 highlightedStreet &&
 getStreetName(p)===highlightedStreet
 ){
@@ -1593,7 +1676,7 @@ document.getElementById("modalAdresse").value=p.adresse||"";
 document.getElementById("modalFirma").value=p.firma||"";
 document.getElementById("modalHinweis").value=p.hinweis||"";
 document.getElementById("modalBriefkasten").checked=p.briefkasten===true;
-
+document.getElementById("modalTeil").value=p.teil||"";
 document.getElementById("markerEditBox").style.display="flex";
 
 }
@@ -1624,6 +1707,7 @@ p.adresse=document.getElementById("modalAdresse").value.trim();
 p.firma=document.getElementById("modalFirma").value.trim();
 p.hinweis=document.getElementById("modalHinweis").value.trim();
 p.briefkasten=document.getElementById("modalBriefkasten").checked;
+p.teil=document.getElementById("modalTeil").value;
 
 saveCurrent();
 draw();
