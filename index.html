@@ -764,12 +764,26 @@ JSON.parse(
 localStorage.getItem("notes")||"[]"
 );
 let markers=[];
+
 const clusterLayer = L.markerClusterGroup({
 maxClusterRadius:45,
-disableClusteringAtZoom:18,
+disableClusteringAtZoom:17,
 spiderfyOnMaxZoom:true,
-showCoverageOnHover:false
+showCoverageOnHover:false,
+zoomToBoundsOnClick:false
 });
+
+clusterLayer.on("clusterclick",function(e){
+
+const bounds=e.layer.getBounds();
+
+map.fitBounds(bounds,{
+paddingTopLeft:[0,150],
+paddingBottomRight:[0,50]
+});
+
+});
+
 let line;
 let editMode=false;
 const ADMIN_PIN="0904";
