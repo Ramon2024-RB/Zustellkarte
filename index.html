@@ -1737,18 +1737,19 @@ editMode=!editMode;
 if(editMode){
 
 addMode=false;
-deleteMode=false;
 insertMode=false;
 mailboxMode=false;
 mailboxInsertMode=false;
 
-alert("Bearbeitungsmodus AN. Tippe einen Marker an.");
+document.getElementById("modeBanner").style.display="block";
+document.getElementById("modeBanner").textContent=
+"✏️ Marker bearbeiten";
 
-closeSidebarAfterMode();
+closeSidebar();
 
 }else{
 
-alert("Bearbeitungsmodus AUS.");
+document.getElementById("modeBanner").style.display="none";
 
 }
 
