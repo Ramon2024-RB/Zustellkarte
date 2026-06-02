@@ -983,6 +983,14 @@ function setDeliveryPart(part){
 
 activePart=part;
 
+if(part==="A"){
+alert("A-Teil wird angezeigt.");
+}else if(part==="B"){
+alert("B-Teil wird angezeigt.");
+}else{
+alert("Alle Stopps werden angezeigt.");
+}
+
 draw();
 
 }
@@ -998,14 +1006,6 @@ return;
 document.getElementById("searchInput").value=input.value;
 
 searchAddress();
-
-}
-
-function setDeliveryPart(part){
-
-activePart=part;
-
-draw();
 
 }
 
@@ -1440,7 +1440,19 @@ if(p.done){
 marker.setOpacity(0.35);
 }
 
+if(activePart){
+
+if(p.teil===activePart){
+marker.addTo(map);
+}else{
+return;
+}
+
+}else{
+
 clusterLayer.addLayer(marker);
+
+}
 
 if(p.briefkasten){
 
@@ -1527,7 +1539,9 @@ if(points.length>1){
 line=L.polyline(points.map(p=>[p.lat,p.lng])).addTo(map);
 }
 
+if(!activePart){
 map.addLayer(clusterLayer);
+}
 
 updateProgress();
 renderMailboxList();
