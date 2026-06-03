@@ -2610,43 +2610,37 @@ const numbers = parts.slice(1, parts.length - 1);
 
 try{
 
+for(let i=0; i<numbers.length; i++){
+
+const fullAddress =
+street + " " + numbers[i] + ", " + city;
+
 const res = await fetch(
 "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=" +
-encodeURIComponent(street + ", " + city)
+encodeURIComponent(fullAddress)
 );
 
 const data = await res.json();
 
 if(data.length === 0){
-console.log("Straße nicht gefunden:", street, city);
+console.log("Adresse nicht gefunden:", fullAddress);
 continue;
 }
 
-const baseLat = parseFloat(data[0].lat);
-const baseLng = parseFloat(data[0].lon);
-
-for(let i=0; i<numbers.length; i++){
-
-const angle = 0.00008;
-const offset = i - (numbers.length / 2);
-
-const lat = baseLat + offset * angle;
-const lng = baseLng + offset * angle;
-
 points.push({
-lat: lat,
-lng: lng,
-adresse: street + " " + numbers[i] + ", " + city,
+lat: parseFloat(data[0].lat),
+lng: parseFloat(data[0].lon),
+adresse: fullAddress,
 firma: "",
 hinweis: "",
 empfaenger: []
 });
 
-}
-
 draw();
 
-await new Promise(resolve => setTimeout(resolve, 1200));
+await new Promise(resolve => setTimeout(resolve, 800));
+
+}
 
 }catch(e){
 
