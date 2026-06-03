@@ -606,6 +606,20 @@ z-index:9999;
 </div>
 
 <div class="section">
+
+<div class="sectionTitle">
+📝 Schnellnotizen
+</div>
+
+<button onclick="addNote()">
+➕ Neue Notiz
+</button>
+
+<div id="notesList"></div>
+
+</div>
+
+<div class="section">
 <div class="sectionTitle">Bezirk</div>
 
 <input id="bezirkName" placeholder="Bezirk, z.B. Bezirk 12">
@@ -618,18 +632,6 @@ z-index:9999;
 <select id="bezirkListe"></select>
 
 <input type="file" id="importFile" accept=".json" onchange="importDistrict()">
-</div>
-
-<div class="sectionTitle">
-📝 Schnellnotizen
-</div>
-
-<button onclick="addNote()">
-➕ Neue Notiz
-</button>
-
-<div id="notesList"></div>
-
 </div>
 
 <div class="section">
