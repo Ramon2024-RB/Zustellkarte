@@ -604,6 +604,7 @@ z-index:9999;
 
 <button onclick="saveDistrict()">Bezirk speichern</button>
 <button onclick="loadDistrict()">Bezirk laden</button>
+<button onclick="newDistrict()">➕ Neuer Bezirk</button>
 <button onclick="downloadDistrictFile()">Bezirkdatei downloaden</button>
 
 <select id="bezirkListe"></select>
@@ -1986,6 +1987,33 @@ document.getElementById("modeBanner").style.display="none";
 }
 
 draw();
+
+}
+
+function newDistrict(){
+
+if(points.length>0){
+
+if(!confirm("Aktuellen Bezirk aus der Ansicht entfernen und neuen Bezirk beginnen? Der gespeicherte Bezirk wird nicht gelöscht.")){
+return;
+}
+
+}
+
+points=[];
+nextIndex=0;
+activeStopIndex=null;
+highlightedStreet=null;
+activePart="";
+
+document.getElementById("bezirkName").value="";
+
+saveCurrent();
+draw();
+renderMailboxList();
+updateStatusBar();
+
+alert("Neuer Bezirk gestartet. Du kannst jetzt neue Marker setzen und unter neuem Namen speichern.");
 
 }
 
