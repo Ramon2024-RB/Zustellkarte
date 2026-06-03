@@ -1505,6 +1505,8 @@ marker.bindPopup(
 (p.firma
 ? "<br><b>🏢 Firma:</b> "+p.firma
 : "")+
+"<br><b>📬 Zustellteil:</b> "+
+(p.teil ? p.teil+"-Teil" : "Nicht gesetzt")+
 "<br>Hinweis: "+(p.hinweis || "")+
 "<br><br>"+
 "<button onclick='navigateApple("+index+")'>🗺️ Apple</button> "+
