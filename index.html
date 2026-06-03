@@ -704,6 +704,8 @@ placeholder="Straße oder Adresse suchen"
 <button onclick="toggleInsertMode()">↔️ Zwischenstopp einfügen</button>
 <button onclick="toggleMailboxMode()">📮 Briefkasten hinzufügen</button>
 <button onclick="toggleMailboxInsertMode()">📮 Briefkasten zwischen Stopps</button>
+<button onclick="startPartRange('A')">🅰️ A-Teil Bereich setzen</button>
+<button onclick="startPartRange('B')">🅱️ B-Teil Bereich setzen</button>
 
 <button onclick="importAddressList()">Adressliste importieren</button>
 
@@ -936,6 +938,8 @@ let nextIndex=0;
 let activeStopIndex=null;
 let highlightedStreet=null;
 let activePart="";
+let partRangeMode="";
+let partRangeStartIndex=null;
 
 let numberLabels=[];
 
@@ -1530,6 +1534,58 @@ alert("Jetzt auf die Karte tippen, wo der Post-Briefkasten steht.");
 return;
 }
 
+if(partRangeMode){
+
+if(partRangeStartIndex===null){
+
+partRangeStartIndex=index;
+
+const banner=document.getElementById("modeBanner");
+
+if(banner){
+banner.textContent=
+(partRangeMode==="A"
+?"🅰️ A-Teil Bereich: letzten Marker antippen"
+:"🅱️ B-Teil Bereich: letzten Marker antippen");
+}
+
+alert("Startmarker gesetzt. Jetzt den letzten Marker antippen.");
+
+return;
+
+}
+
+const start=Math.min(partRangeStartIndex,index);
+const end=Math.max(partRangeStartIndex,index);
+
+for(let i=start;i<=end;i++){
+points[i].teil=partRangeMode;
+}
+
+saveCurrent();
+
+alert(
+(end-start+1)+
+" Marker wurden auf "+
+partRangeMode+
+"-Teil gesetzt."
+);
+
+partRangeMode="";
+partRangeStartIndex=null;
+
+const banner=document.getElementById("modeBanner");
+
+if(banner){
+banner.style.display="none";
+}
+
+draw();
+
+return;
+
+}
+
 if(deleteMode){
 
 if(confirm("Diesen Zustellstopp löschen?")){
@@ -1970,6 +2026,38 @@ alert("Löschen AN. Tippe einen Zustellstopp an.");
 alert("Löschen AUS.");
 
 }
+
+draw();
+
+}
+
+function startPartRange(part){
+
+partRangeMode=part;
+partRangeStartIndex=null;
+
+editMode=false;
+addMode=false;
+insertMode=false;
+mailboxMode=false;
+mailboxInsertMode=false;
+
+const banner=document.getElementById("modeBanner");
+
+if(banner){
+banner.style.display="block";
+banner.textContent=
+(part==="A"
+?"🅰️ A-Teil Bereich: ersten Marker antippen"
+:"🅱️ B-Teil Bereich: ersten Marker antippen");
+}
+
+closeSidebar();
+
+alert(
+(part==="A"?"A-Teil":"B-Teil")+
+" Bereich aktiv. Tippe zuerst den ersten Marker und danach den letzten Marker an."
+);
 
 draw();
 
