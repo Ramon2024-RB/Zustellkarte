@@ -1190,10 +1190,7 @@ box.style.display="none";
 
 function renderNotes(){
 
-const box=
-document.getElementById(
-"notesList"
-);
+const box=document.getElementById("notesList");
 
 if(!box){
 return;
@@ -1201,77 +1198,58 @@ return;
 
 box.innerHTML="";
 
-notes.forEach(
-(n,index)=>{
+notes.forEach((n,index)=>{
 
-const div=
-document.createElement("div");
+const div=document.createElement("div");
 
-div.style.border=
-"1px solid #ddd";
-
-div.style.padding=
-"8px";
-
-div.style.marginTop=
-"6px";
-
-div.style.borderRadius=
-"8px";
+div.style.border="1px solid #ddd";
+div.style.padding="8px";
+div.style.marginTop="6px";
+div.style.borderRadius="8px";
 
 div.innerHTML=
-
-"<b>📝 "+
-n.datum+
-" "+
-n.uhrzeit+
-"</b><br>"+
-
-"<b>"+
-n.ort+
-"</b><br>"+
-
+"<b>📝 "+n.datum+" "+n.uhrzeit+"</b><br>"+
+"<b>"+n.ort+"</b><br>"+
 n.text+
+"<br><br>";
 
-"<br><br>"+
-"<button onclick='editNote("+
-index+
-")'>✏️ Bearbeiten</button> "+
-"<button onclick='deleteNote("+
-index+
-")'>🗑️ Löschen</button>";
+const editBtn=document.createElement("button");
+editBtn.textContent="✏️ Bearbeiten";
+editBtn.onclick=function(){
+editNote(index);
+};
+
+const deleteBtn=document.createElement("button");
+deleteBtn.textContent="🗑️ Löschen";
+deleteBtn.onclick=function(){
+deleteNote(index);
+};
+
+div.appendChild(editBtn);
+div.appendChild(deleteBtn);
 
 box.appendChild(div);
 
+});
+
 }
-);
 
 function editNote(index){
 
-const oldText =
-typeof notes[index] === "string"
-? notes[index]
-: (notes[index].text || "");
+const oldText=
+notes[index] && notes[index].text
+? notes[index].text
+: "";
 
-const newText = prompt(
-"Notiz bearbeiten:",
-oldText
-);
+const newText=prompt("Notiz bearbeiten:",oldText);
 
-if(newText === null){
+if(newText===null){
 return;
 }
 
-if(typeof notes[index] === "string"){
-notes[index] = newText.trim();
-}else{
-notes[index].text = newText.trim();
-}
+notes[index].text=newText.trim();
 
-localStorage.setItem(
-"notes",
-JSON.stringify(notes)
-);
+localStorage.setItem("notes",JSON.stringify(notes));
 
 renderNotes();
 
