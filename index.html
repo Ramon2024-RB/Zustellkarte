@@ -1248,16 +1248,25 @@ box.appendChild(div);
 
 function editNote(index){
 
-const newText=prompt(
+const oldText =
+typeof notes[index] === "string"
+? notes[index]
+: (notes[index].text || "");
+
+const newText = prompt(
 "Notiz bearbeiten:",
-notes[index].text || ""
+oldText
 );
 
-if(newText===null){
+if(newText === null){
 return;
 }
 
-notes[index].text=newText.trim();
+if(typeof notes[index] === "string"){
+notes[index] = newText.trim();
+}else{
+notes[index].text = newText.trim();
+}
 
 localStorage.setItem(
 "notes",
