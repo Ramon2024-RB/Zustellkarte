@@ -2300,6 +2300,12 @@ function(pos){
 const lat=pos.coords.latitude;
 const lng=pos.coords.longitude;
 
+if(pos.coords.accuracy > 25){
+console.log("Ungenauer Standort ignoriert:", pos.coords.accuracy);
+return;
+}
+
+
 if(myLocation){
 myLocation.setLatLng([lat,lng]);
 }else{
@@ -2319,9 +2325,9 @@ console.log("Standort nicht erlaubt oder nicht verfügbar.");
 },
 
 {
-enableHighAccuracy:false,
-maximumAge:30000,
-timeout:10000
+enableHighAccuracy:true,
+maximumAge:5000,
+timeout:15000
 }
 
 );
