@@ -2300,7 +2300,7 @@ function(pos){
 const lat=pos.coords.latitude;
 const lng=pos.coords.longitude;
 
-if(pos.coords.accuracy > 25){
+if(pos.coords.accuracy > 40){
 console.log("Ungenauer Standort ignoriert:", pos.coords.accuracy);
 return;
 }
