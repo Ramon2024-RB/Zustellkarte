@@ -1853,7 +1853,10 @@ document
 || "bezirk";
 
 const data =
-JSON.stringify(points,null,2);
+JSON.stringify({
+points:points,
+notes:notes
+},null,2);
 
 const blob =
 new Blob(
@@ -2146,7 +2149,10 @@ return;
 
 localStorage.setItem(
 "bezirk_"+name,
-JSON.stringify(points)
+JSON.stringify({
+points:points,
+notes:notes
+})
 );
 
 localStorage.setItem("letzterBezirk",name);
@@ -2174,7 +2180,17 @@ alert("Bezirk nicht gefunden.");
 return;
 }
 
-points=JSON.parse(data);
+const parsed=JSON.parse(data);
+
+if(Array.isArray(parsed)){
+points=parsed;
+notes=[];
+}else{
+points=parsed.points || [];
+notes=parsed.notes || [];
+}
+
+renderNotes();
 saveCurrent();
 
 document.getElementById("bezirkName").value=name;
