@@ -1234,7 +1234,9 @@ n.ort+
 n.text+
 
 "<br><br>"+
-
+"<button onclick='editNote("+
+index+
+")'>✏️ Bearbeiten</button> "+
 "<button onclick='deleteNote("+
 index+
 ")'>🗑️ Löschen</button>";
@@ -1243,6 +1245,26 @@ box.appendChild(div);
 
 }
 );
+
+function editNote(index){
+
+const newText=prompt(
+"Notiz bearbeiten:",
+notes[index].text || ""
+);
+
+if(newText===null){
+return;
+}
+
+notes[index].text=newText.trim();
+
+localStorage.setItem(
+"notes",
+JSON.stringify(notes)
+);
+
+renderNotes();
 
 }
 
