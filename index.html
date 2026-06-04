@@ -658,6 +658,14 @@ placeholder="Straße oder Adresse suchen"
 <div class="section">
 <div class="sectionTitle">Extras</div>
 
+<div class="sectionTitle">📍 Standortgenauigkeit</div>
+
+<select id="gpsModeSelect" onchange="changeGpsMode()">
+<option value="low">Niedrig – Akku sparen</option>
+<option value="medium">Mittel – empfohlen</option>
+<option value="high">Hoch – genau</option>
+</select>
+
 <div class="sectionTitle">
 📬 Zustellteil
 </div>
@@ -940,6 +948,8 @@ let highlightedStreet=null;
 let activePart="";
 let partRangeMode="";
 let partRangeStartIndex=null;
+let gpsMode=localStorage.getItem("gpsMode") || "medium";
+let gpsWatchId=null;
 
 let numberLabels=[];
 
@@ -2286,6 +2296,44 @@ async function importAddressList(){
 alert("Adresslisten-Import ist noch nicht sauber aktiv. Wir bauen den als Nächstes neu ein.");
 }
 
+function getGpsOptions(){
+
+if(gpsMode==="low"){
+return {
+enableHighAccuracy:false,
+maximumAge:30000,
+timeout:10000
+};
+}
+
+if(gpsMode==="high"){
+return {
+enableHighAccuracy:true,
+maximumAge:0,
+timeout:15000
+};
+}
+
+return {
+enableHighAccuracy:true,
+maximumAge:10000,
+timeout:15000
+};
+
+}
+
+function changeGpsMode(){
+
+gpsMode=document.getElementById("gpsModeSelect").value;
+
+localStorage.setItem("gpsMode",gpsMode);
+
+showLocation();
+
+alert("Standortgenauigkeit geändert.");
+
+}
+
 function showLocation(){
 
 if(!navigator.geolocation){
@@ -2293,7 +2341,11 @@ alert("Standort wird von diesem Browser nicht unterstützt.");
 return;
 }
 
-navigator.geolocation.watchPosition(
+if(gpsWatchId!==null){
+navigator.geolocation.clearWatch(gpsWatchId);
+}
+
+gpsWatchId=navigator.geolocation.watchPosition(
 
 function(pos){
 
@@ -2324,11 +2376,7 @@ function(){
 console.log("Standort nicht erlaubt oder nicht verfügbar.");
 },
 
-{
-enableHighAccuracy:true,
-maximumAge:10000,
-timeout:15000
-}
+getGpsOptions()
 
 );
 
@@ -2832,6 +2880,12 @@ showLocation();
 draw();
 renderNotes();
 renderMailboxList();
+
+const gpsSelect=document.getElementById("gpsModeSelect");
+
+if(gpsSelect){
+gpsSelect.value=gpsMode;
+}
 
 map.on("zoomend",function(){
 renderNumberLabels();
